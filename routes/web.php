@@ -24,11 +24,15 @@ Route::middleware('auth')->group(function () {
     // ==================== ROUTES PAR RÔLE ====================
 
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            //return view('admin.dashboard'); // ou ton contrôleur
-        })->name('dashboard');
+        Route::get('/dashboard', [App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
     });
 
+    /*Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard'); // ou ton contrôleur
+        })->name('dashboard');
+    });
+*/
     Route::middleware(['role:secretaire'])->prefix('secretaire')->name('secretaire.')->group(function () {
         Route::get('/dashboard', function () {
             return view('secretaire.dashboard');
