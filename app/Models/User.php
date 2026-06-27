@@ -70,4 +70,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasRole('patient');
     }
+
+    /**
+     * Retourne le profil selon le rôle
+     */
+    public function profile()
+    {
+        if ($this->isMedecin()) return $this->medecin;
+        if ($this->isPatient()) return $this->patient;
+        return null;
+    }
 }
