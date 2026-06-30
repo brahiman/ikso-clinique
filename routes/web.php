@@ -45,6 +45,16 @@ Route::middleware('auth')->group(function () {
         })->name('dashboard');
     });
 
+    Route::middleware(['role:patient'])->prefix('patient')->name('patient.')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('patient.dashboard');
+        })->name('dashboard');
+
+        Route::get('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'create'])->name('demandes.create');
+        Route::post('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'store'])->name('demandes.store');
+
+    });
+
     // Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
