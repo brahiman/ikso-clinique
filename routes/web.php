@@ -37,6 +37,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', function () {
             return view('secretaire.dashboard');
         })->name('dashboard');
+
+        Route::get('/demandes', [App\Http\Controllers\Secretaire\DemandeController::class, 'index'])->name('demandes.index');
+        Route::post('/demandes/{demande}/affecter', [App\Http\Controllers\Secretaire\DemandeController::class, 'affecter'])->name('demandes.affecter');
+        Route::resource('patients', \App\Http\Controllers\Secretaire\PatientController::class)->only(['index', 'create', 'store']);
+        Route::post('patients/{patient}/affecter', [App\Http\Controllers\Secretaire\PatientController::class, 'affecter'])->name('patients.affecter');
+
+        // Route pour le formulaire d'affectation
+        Route::get('patients/{patient}/affecter', [App\Http\Controllers\Secretaire\PatientController::class, 'affecterForm'])
+            ->name('patients.affecter-form');
+
     });
 
     Route::middleware(['role:medecin'])->prefix('medecin')->name('medecin.')->group(function () {
@@ -52,6 +62,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'create'])->name('demandes.create');
         Route::post('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'store'])->name('demandes.store');
+        Route::get('/mes-demandes', [App\Http\Controllers\Patient\DemandeController::class, 'index'])->name('demandes.index');
 
     });
 

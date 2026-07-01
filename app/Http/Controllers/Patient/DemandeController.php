@@ -9,6 +9,17 @@ use Illuminate\Support\Facades\Auth;
 
 class DemandeController extends Controller
 {
+    public function index()
+    {
+        $demandes = DemandeConsultation::where('patient_id', Auth::user()->patient?->id)
+            ->with('medecin.user')
+            ->latest()
+            ->get();
+
+        return view('patient.demandes.index', compact('demandes'));
+    }
+
+
     public function create()
     {
         return view('patient.demande-consultation');
@@ -41,12 +52,12 @@ class DemandeController extends Controller
     }
 
     // Liste des demandes du patient
-    public function index()
+    /*public function index()
     {
         $demandes = DemandeConsultation::where('patient_id', Auth::user()->patient?->id)
             ->latest()
             ->get();
 
         return view('patient.demandes.index', compact('demandes'));
-    }
+    }*/
 }
