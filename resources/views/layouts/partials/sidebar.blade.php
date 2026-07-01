@@ -46,19 +46,19 @@
                     <!-- ==================== SECRÉTAIRE ==================== -->
                     <li class="menu-title">Opérations</li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="{{route('secretaire.demandes.index')}}" class="waves-effect">
                             <i class="ri-file-list-3-line"></i>
                             <span>Demandes de consultation</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="{{route('secretaire.patients.index')}}" class="waves-effect">
                             <i class="ri-user-line"></i>
                             <span>Patients</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="" class="waves-effect">
                             <i class="ri-calendar-check-line"></i>
                             <span>Rendez-vous</span>
                         </a>
@@ -90,7 +90,7 @@
                     <!-- ==================== PATIENT ==================== -->
                     <li class="menu-title">Mon Espace</li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="{{route('patient.demandes.index')}}" class="waves-effect">
                             <i class="ri-calendar-check-line"></i>
                             <span>Mes Rendez-vous</span>
                         </a>
