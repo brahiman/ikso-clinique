@@ -34,18 +34,33 @@ Route::middleware('auth')->group(function () {
     });
 */
     Route::middleware(['role:secretaire'])->prefix('secretaire')->name('secretaire.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('secretaire.dashboard');
-        })->name('dashboard');
 
-        Route::get('/demandes', [App\Http\Controllers\Secretaire\DemandeController::class, 'index'])->name('demandes.index');
-        Route::post('/demandes/{demande}/affecter', [App\Http\Controllers\Secretaire\DemandeController::class, 'affecter'])->name('demandes.affecter');
-        Route::resource('patients', \App\Http\Controllers\Secretaire\PatientController::class)->only(['index', 'create', 'store']);
-        Route::post('patients/{patient}/affecter', [App\Http\Controllers\Secretaire\PatientController::class, 'affecter'])->name('patients.affecter');
+        // Accueil Secrétaire (Dashboard)
+        Route::get('/dashboard', [App\Http\Controllers\Secretaire\SecretaireDashboardController::class, 'index'])
+            ->name('dashboard');
 
-        // Route pour le formulaire d'affectation
+        // Demandes de consultation
+        Route::get('/demandes', [App\Http\Controllers\Secretaire\DemandeController::class, 'index'])
+            ->name('demandes.index');
+        Route::post('/demandes/{demande}/affecter', [App\Http\Controllers\Secretaire\DemandeController::class, 'affecter'])
+            ->name('demandes.affecter');
+        Route::get('/demandes/{demande}', [App\Http\Controllers\Secretaire\DemandeController::class, 'show'])
+            ->name('demandes.show');
+
+        Route::get('/consultations/direct', [App\Http\Controllers\Secretaire\ConsultationController::class, 'createDirect'])->name('consultations.direct');
+        Route::post('/consultations/direct', [App\Http\Controllers\Secretaire\ConsultationController::class, 'storeDirect'])->name('consultations.direct.store');
+
+        Route::get('/consultations', [App\Http\Controllers\Secretaire\ConsultationController::class, 'index'])->name('consultations.index');
+
+        // Patients
+        Route::resource('patients', App\Http\Controllers\Secretaire\PatientController::class)
+            ->only(['index', 'create', 'store']);
+
         Route::get('patients/{patient}/affecter', [App\Http\Controllers\Secretaire\PatientController::class, 'affecterForm'])
             ->name('patients.affecter-form');
+
+        Route::post('patients/{patient}/affecter', [App\Http\Controllers\Secretaire\PatientController::class, 'affecter'])
+            ->name('patients.affecter');
 
     });
 

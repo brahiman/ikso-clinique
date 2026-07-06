@@ -8,14 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class DemandeConsultation extends Model
 {
     use HasFactory;
-
     protected $table = 'demandes_consultations';
     protected $fillable = [
         'patient_id',
+        'service_souhaite',
         'motif',
         'symptomes',
         'urgence',
         'disponibilite_patient',
+        'date_souhaitee',
+        'heure_souhaitee',
+        'pref_medecin',
         'statut',
         'secretaire_id',
         'medecin_id',
@@ -26,6 +29,7 @@ class DemandeConsultation extends Model
         'date_affectation' => 'datetime',
         'urgence' => 'string',
         'statut' => 'string',
+        'date_souhaitee' => 'date',
     ];
 
     // ====================== RELATIONS ======================
@@ -74,18 +78,12 @@ class DemandeConsultation extends Model
         return $this->statut === 'en_attente';
     }
 
-    public function isAffectee(): bool
-    {
-        return $this->statut === 'affectee';
-    }
-
     public function getUrgenceBadgeAttribute()
     {
         return match($this->urgence) {
-            'haute' => '<span class="badge bg-danger">Urgent</span>',
-            'moyenne' => '<span class="badge bg-warning">Moyen</span>',
-            'basse' => '<span class="badge bg-info">Normal</span>',
-            default => ''
+            'haute' => '<span class="badge bg-danger">Urgente</span>',
+            'moyenne' => '<span class="badge bg-warning">Moyenne</span>',
+            default => '<span class="badge bg-info">Normale</span>'
         };
     }
 }
