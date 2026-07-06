@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use App\Models\DemandeConsultation;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +20,6 @@ class DemandeController extends Controller
         return view('patient.demandes.index', compact('demandes'));
     }
 
-
     public function create()
     {
         return view('patient.demande-consultation');
@@ -27,37 +27,60 @@ class DemandeController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'motif' => 'required|string|max:255',
-            'symptomes' => 'required|string',
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'date_naissance' => 'nullable|date',
+            'localisation' => 'required|string',
+            'adresse' => 'nullable|string',
+            'service_souhaite' => 'required|string',
             'urgence' => 'required|in:basse,moyenne,haute',
+            'pref_medecin' => 'nullable|string',
+            'date_souhaitee' => 'nullable|date',
+            'heure_souhaitee' => 'nullable|string',
             'disponibilite_patient' => 'nullable|string',
+            'symptomes' => 'required|string',
         ]);
 
+        // Recherche ou création du patient
+        $patient = Patient::firstOrCreate(
+            ['telephone' => $validated['telephone']],
+            [
+                'nom' => $validated['nom'],
+                'prenom' => $validated['prenom'],
+                'email' => $validated['email'],
+                'date_naissance' => $validated['date_naissance'],
+                'adresse' => $validated['adresse'] ?? $validated['localisation'],
+                'groupe_sanguin' => $request->groupe_sanguin ?? 'Inconnu',
+                'contact_urgence_nom' => $request->contact_urgence_nom ?? null,
+                'contact_urgence_telephone' => $request->contact_urgence_telephone ?? null,
+                'created_by' => Auth::id(),
+            ]
+        );
+
+        // Mise à jour des informations si le patient existait déjà
+        $patient->update([
+            'nom' => $validated['nom'],
+            'prenom' => $validated['prenom'],
+            'email' => $validated['email'],
+            'adresse' => $validated['adresse'] ?? $validated['localisation'],
+        ]);
+
+        // Création de la demande
         $demande = DemandeConsultation::create([
-            'patient_id' => Auth::user()->patient?->id,   // Lien avec le profil patient
-            'motif' => $request->motif,
-            'symptomes' => $request->symptomes,
-            'urgence' => $request->urgence,
-            'disponibilite_patient' => $request->disponibilite_patient,
+            'patient_id' => $patient->id,
+            'service_souhaite' => $validated['service_souhaite'],
+            'motif' => $validated['service_souhaite'] . ' - ' . $validated['symptomes'],
+            'symptomes' => $validated['symptomes'],
+            'urgence' => $validated['urgence'],
+            'disponibilite_patient' => $validated['disponibilite_patient'] . ' | ' . ($validated['date_souhaitee'] ?? '') . ' ' . ($validated['heure_souhaitee'] ?? ''),
+            'pref_medecin' => $validated['pref_medecin'] ?? null,
             'statut' => 'en_attente',
-            'secretaire_id' => null,   // Sera rempli par la secrétaire
         ]);
-
-        // Notification à la secrétaire (plus tard avec Laravel Notifications)
-        // Pour l'instant, on peut logger ou envoyer un email
 
         return redirect()->route('patient.dashboard')
-            ->with('success', 'Votre demande de consultation a été envoyée avec succès. Vous serez contacté prochainement.');
+            ->with('success', 'Votre demande de rendez-vous a été envoyée avec succès. La secrétaire vous contactera bientôt.');
     }
-
-    // Liste des demandes du patient
-    /*public function index()
-    {
-        $demandes = DemandeConsultation::where('patient_id', Auth::user()->patient?->id)
-            ->latest()
-            ->get();
-
-        return view('patient.demandes.index', compact('demandes'));
-    }*/
 }

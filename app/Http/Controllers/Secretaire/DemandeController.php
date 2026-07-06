@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Secretaire;
 
 use App\Http\Controllers\Controller;
 use App\Models\DemandeConsultation;
+use App\Models\Medecin;
+use App\Models\Patient;
+use App\Models\Consultation;
 use Illuminate\Http\Request;
 
 class DemandeController extends Controller
@@ -33,4 +36,13 @@ class DemandeController extends Controller
         return redirect()->route('secretaire.demandes.index')
             ->with('success', 'Demande affectée avec succès au médecin.');
     }
+
+    public function show(DemandeConsultation $demande)
+    {
+        $demande->load(['patient', 'medecin.user']);
+
+        return view('secretaire.demandes.show', compact('demande'));
+    }
+
+
 }

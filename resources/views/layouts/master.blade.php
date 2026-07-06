@@ -16,6 +16,7 @@
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet">
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet">
+    <link href="{{ asset('assets/perso-style.css') }}" id="app-style" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @yield('styles')

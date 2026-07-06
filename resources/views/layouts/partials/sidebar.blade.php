@@ -46,13 +46,14 @@
                     <!-- ==================== SECRÉTAIRE ==================== -->
                     <li class="menu-title">Opérations</li>
                     <li>
-                        <a href="{{route('secretaire.demandes.index')}}" class="waves-effect">
-                            <i class="ri-file-list-3-line"></i>
-                            <span>Demandes de consultation</span>
+                        <a href="{{ route('secretaire.patients.index') }}" class="waves-effect">
+                            <i class="ri-user-line"></i>
+                            <span>Gestion des Patients</span>
                         </a>
                     </li>
+
                     <li>
-                        <a href="{{route('secretaire.patients.index')}}" class="waves-effect">
+                        <a href="#" class="waves-effect">
                             <i class="ri-user-line"></i>
                             <span>Patients</span>
                         </a>
