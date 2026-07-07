@@ -13,13 +13,26 @@ class Patient extends Model
     protected $fillable = [
         'nom', 'prenom', 'sexe', 'date_naissance', 'telephone',
         'email', 'adresse', 'groupe_sanguin', 'contact_urgence_nom',
-        'contact_urgence_telephone', 'created_by', 'user_id'  // Ajoute ceci
+        'contact_urgence_telephone', 'created_by', 'responsable_id'
     ];
 
     protected $casts = [
         'date_naissance' => 'date',
     ];
 
+    // ====================== RELATIONS ======================
+
+    /**
+     * Le responsable (parent, conjoint, tuteur, etc.) qui a créé le compte
+     */
+    public function responsable()
+    {
+        return $this->belongsTo(User::class, 'responsable_id');
+    }
+
+    /**
+     * Si le patient a un compte utilisateur personnel
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -38,5 +51,17 @@ class Patient extends Model
     public function rendezVous()
     {
         return $this->hasMany(RendezVous::class);
+    }
+
+    // ====================== HELPERS ======================
+
+    public function isChildOrDependent()
+    {
+        return !is_null($this->responsable_id);
+    }
+
+    public function hasPersonalAccount()
+    {
+        return !is_null($this->user_id);
     }
 }
