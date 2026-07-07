@@ -50,6 +50,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Patient::class);
     }
 
+    public function patients()
+    {
+        return $this->hasMany(Patient::class, 'responsable_id');
+    }
+
     // Helpers pour les rôles
     public function isAdmin(): bool
     {

@@ -12,14 +12,18 @@ class DemandeController extends Controller
 {
     public function index()
     {
-        $demandes = DemandeConsultation::where('patient_id', Auth::user()->patient?->id)
-            ->with('medecin.user')
-            ->latest()
-            ->get();
+        $patient = Auth::user()->patient;
+
+        if (!$patient) {
+            return view('patient.demandes.index', ['demandes' => collect()]);
+        }
+
+        $demandes = DemandeConsultation::whereHas('patient', function($q) {
+            $q->where('responsable_id', Auth::id());
+        })->with('patient', 'medecin.user')->latest()->get();
 
         return view('patient.demandes.index', compact('demandes'));
     }
-
     public function create()
     {
         return view('patient.demande-consultation');
@@ -56,6 +60,7 @@ class DemandeController extends Controller
                 'groupe_sanguin' => $request->groupe_sanguin ?? 'Inconnu',
                 'contact_urgence_nom' => $request->contact_urgence_nom ?? null,
                 'contact_urgence_telephone' => $request->contact_urgence_telephone ?? null,
+                'responsable_id' => Auth::id(),
                 'created_by' => Auth::id(),
             ]
         );
