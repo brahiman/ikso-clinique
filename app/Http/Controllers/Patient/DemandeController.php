@@ -81,7 +81,8 @@ class DemandeController extends Controller
             'motif' => $validated['service_souhaite'] . ' - ' . $validated['symptomes'],
             'symptomes' => $validated['symptomes'],
             'urgence' => $validated['urgence'],
-            'disponibilite_patient' => $validated['disponibilite_patient'] . ' | ' . ($validated['date_souhaitee'] ?? '') . ' ' . ($validated['heure_souhaitee'] ?? ''),
+            'date_souhaitee' => $validated['date_souhaitee'],
+            'disponibilite_patient' => $validated['disponibilite_patient'],
             'pref_medecin' => $validated['pref_medecin'] ?? null,
             'statut' => 'en_attente',
         ]);
