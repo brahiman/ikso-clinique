@@ -1,7 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Medecin\ConsultationController;
+use App\Http\Controllers\Medecin\DemandeController;
+use App\Http\Controllers\Medecin\MedecinDashboardController;
+use App\Http\Controllers\Medecin\RendezVousController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -80,6 +84,22 @@ Route::middleware('auth')->group(function () {
         Route::get('/mes-demandes', [App\Http\Controllers\Patient\DemandeController::class, 'index'])->name('demandes.index');
 
     });
+    Route::prefix('medecin')->name('medecin.')->middleware(['auth', 'role:medecin'])->group(function () {
+    Route::get('/dashboard', [MedecinDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/rendez-vous', [RendezVousController::class, 'index'])->name('rendez-vous.index');
+    Route::patch('/rendez-vous/{rendezVous}/statut', [RendezVousController::class, 'updateStatut'])->name('rendez-vous.statut');
+    Route::post('/rendez-vous/{rendezVous}/demarrer', [RendezVousController::class, 'demarrerConsultation'])->name('rendez-vous.demarrer');
+    Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultations.index');
+    Route::get('/consultations/create', [ConsultationController::class, 'create'])->name('consultations.create');
+    Route::post('/consultations', [ConsultationController::class, 'store'])->name('consultations.store');
+    Route::get('/consultations/{consultation}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
+    Route::put('/consultations/{consultation}', [ConsultationController::class, 'update'])->name('consultations.update');
+    Route::get('/consultations/{consultation}', [ConsultationController::class, 'show'])->name('consultations.show');
+    Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
+    Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
+    Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');
+});
 
     // Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

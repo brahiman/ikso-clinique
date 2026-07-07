@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('nom');
             $table->string('prenom');
             $table->enum('sexe', ['M', 'F']);
-            $table->date('date_naissance');
+            $table->date('date_naissance')->nullable();
             $table->string('telephone')->unique();
             $table->string('email')->nullable()->unique();
             $table->text('adresse')->nullable();

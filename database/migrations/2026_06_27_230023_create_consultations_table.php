@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('medecin_id')->constrained()->onDelete('cascade');
 
             // Peut être null si consultation directe / urgence
-            $table->foreignId('rendez_vous_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('rendez_vous_id')->nullable()->constrained('rendez_vous')->onDelete('set null');
 
             $table->dateTime('date_consultation');
 
