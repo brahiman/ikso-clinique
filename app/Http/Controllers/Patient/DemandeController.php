@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Patient;
 use App\Http\Controllers\Controller;
 use App\Models\DemandeConsultation;
 use App\Models\Patient;
+use App\Models\RendezVous;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -87,5 +88,17 @@ class DemandeController extends Controller
 
         return redirect()->route('patient.dashboard')
             ->with('success', 'Votre demande de rendez-vous a été envoyée avec succès. La secrétaire vous contactera bientôt.');
+    }
+
+    public function mesRendezVous()
+    {
+        $patientIds = Auth::user()->patients->pluck('id');
+
+        $rendezVous = RendezVous::whereIn('patient_id', $patientIds)
+            ->with(['patient', 'medecin.user'])
+            ->latest()
+            ->get();
+
+        return view('patient.rendezvous.index', compact('rendezVous'));
     }
 }

@@ -52,7 +52,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/consultations', [App\Http\Controllers\Secretaire\ConsultationController::class, 'index'])->name('consultations.index');
 
-        // Patients
+
         Route::resource('patients', App\Http\Controllers\Secretaire\PatientController::class)
             ->only(['index', 'create', 'store']);
 
@@ -61,7 +61,6 @@ Route::middleware('auth')->group(function () {
 
         Route::post('patients/{patient}/affecter', [App\Http\Controllers\Secretaire\PatientController::class, 'affecter'])
             ->name('patients.affecter');
-
     });
 
     Route::middleware(['role:medecin'])->prefix('medecin')->name('medecin.')->group(function () {
@@ -69,7 +68,7 @@ Route::middleware('auth')->group(function () {
             return view('medecin.dashboard');
         })->name('dashboard');
     });
-
+    // Patients
     Route::middleware(['role:patient'])->prefix('patient')->name('patient.')->group(function () {
         Route::get('/dashboard', function () {
             return view('patient.dashboard');
@@ -78,7 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'create'])->name('demandes.create');
         Route::post('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'store'])->name('demandes.store');
         Route::get('/mes-demandes', [App\Http\Controllers\Patient\DemandeController::class, 'index'])->name('demandes.index');
-
+        Route::get('/mes-rendez-vous',  [App\Http\Controllers\Patient\DemandeController::class, 'mesRendezVous'])->name('rendezvous');
     });
 
     // Profil
