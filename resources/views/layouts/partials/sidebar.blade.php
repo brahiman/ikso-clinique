@@ -88,20 +88,49 @@
                     </li>
 
                 @elseif(auth()->user()->isPatient())
-                    <!-- ==================== PATIENT ==================== -->
+                    <!-- ==================== PATIENT / RESPONSABLE ==================== -->
                     <li class="menu-title">Mon Espace</li>
+
+                    <!-- Mes Informations -->
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="{{ route('patient.dashboard') }}" class="waves-effect">
+                            <i class="ri-dashboard-line"></i>
+                            <span>Tableau de bord</span>
+                        </a>
+                    </li>
+
+                    <!-- Mes Rendez-vous -->
+                    <li>
+                        <a href="{{ route('patient.rendezvous') }}" class="waves-effect">
                             <i class="ri-calendar-check-line"></i>
                             <span>Mes Rendez-vous</span>
                         </a>
                     </li>
+
+                    <!-- Mes Consultations -->
                     <li>
-                        <a href="#" class="waves-effect">
-                            <i class="ri-folder-user-line"></i>
-                            <span>Mon Dossier</span>
+                        <a href="{{ route('patient.consultations') }}" class="waves-effect">
+                            <i class="ri-file-medical-line"></i>
+                            <span>Mes Consultations</span>
                         </a>
                     </li>
+
+                    <!-- Mes Demandes -->
+                    <li>
+                        <a href="{{ route('patient.demandes.index') }}" class="waves-effect">
+                            <i class="ri-file-list-3-line"></i>
+                            <span>Mes Demandes</span>
+                        </a>
+                    </li>
+
+                    <!-- Mon Dossier Médical -->
+                    <li>
+                        <a href="{{route('patient.dossier.index')}}" class="waves-effect">
+                            <i class="ri-folder-user-line"></i>
+                            <span>Mon Dossier Médical</span>
+                        </a>
+                    </li>
+
                 @endif
 
                 <!-- Menu Commun -->

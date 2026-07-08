@@ -64,4 +64,20 @@ class Patient extends Model
     {
         return !is_null($this->user_id);
     }
+
+    public function dossierMedical()
+    {
+        return $this->hasOne(DossierMedical::class);
+    }
+
+    public function antecedents()
+    {
+        return $this->hasMany(AntecedentMedical::class);
+    }
+
+    public function examens()
+    {
+        return $this->hasMany(ExamenComplementaire::class);
+    }
 }
+
