@@ -88,6 +88,49 @@
                     </div>
                 </div>
 
+
+                <!-- Traitements & Ordonnances -->
+                <div class="col-lg-12 mt-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Traitements & Ordonnances</h5>
+                        </div>
+                        <div class="card-body">
+                            @if($patient->ordonnances->isEmpty())
+                                <p class="text-muted">Aucune ordonnance enregistrée.</p>
+                            @else
+                                <div class="list-group">
+                                    @foreach($patient->ordonnances as $ord)
+                                        <div class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <strong>{{ $ord->date_prescription->format('d/m/Y') }}</strong> -
+                                                    Dr. {{ $ord->medecin->user->name }}
+                                                </div>
+                                                <span class="badge bg-info">Durée : {{ $ord->duree_jours }} jours</span>
+                                            </div>
+
+                                            <div class="mt-2">
+                                                <strong>Médicaments :</strong> {{ $ord->medicaments }}
+                                            </div>
+
+                                            <div class="mt-1">
+                                                <strong>Posologie :</strong> {{ $ord->posologie }}
+                                            </div>
+
+                                            @if($ord->notes)
+                                                <div class="mt-2 text-muted small">
+                                                    <strong>Notes :</strong> {{ $ord->notes }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Historique des Consultations -->
                 <div class="col-lg-12 mt-4">
                     <div class="card">

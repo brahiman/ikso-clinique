@@ -79,5 +79,10 @@ class Patient extends Model
     {
         return $this->hasMany(ExamenComplementaire::class);
     }
+
+    public function ordonnances()
+    {
+        return $this->hasMany(Ordonnance::class);
+    }
 }
 

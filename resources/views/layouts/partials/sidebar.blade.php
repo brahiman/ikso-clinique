@@ -1,3 +1,4 @@
+@if(auth()->check())
 <div class="vertical-menu">
     <div data-simplebar class="h-100">
         <div id="sidebar-menu">
@@ -147,3 +148,4 @@
         </div>
     </div>
 </div>
+@endif
