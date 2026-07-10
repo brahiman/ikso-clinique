@@ -75,13 +75,13 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="{{ route('medecin.rendez-vous.index') }}" class="waves-effect">
                             <i class="ri-calendar-event-line"></i>
                             <span>Mon Agenda</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="{{ route('medecin.consultations.index') }}" class="waves-effect">
                             <i class="ri-file-medical-line"></i>
                             <span>Mes Consultations</span>
                         </a>

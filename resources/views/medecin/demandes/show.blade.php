@@ -45,7 +45,7 @@
                                 @csrf
                                 <div class="mb-3">
                                     <label class="form-label">Date et heure</label>
-                                    <input type="datetime-local" name="date_heure" class="form-control" required>
+                                    <input type="datetime-local" name="date_heure" class="form-control" value="{{$demande->date_souhaitee}}" >
                                     @error('date_heure') <div class="text-danger small">{{ $message }}</div> @enderror
                                 </div>
                                 <div class="mb-3">
