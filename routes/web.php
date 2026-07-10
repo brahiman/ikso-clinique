@@ -8,7 +8,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 Route::middleware('auth')->group(function () {
@@ -82,6 +82,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'store'])->name('demandes.store');
         Route::get('/mes-demandes', [App\Http\Controllers\Patient\DemandeController::class, 'index'])->name('demandes.index');
         Route::get('/mes-rendez-vous',  [App\Http\Controllers\Patient\DemandeController::class, 'mesRendezVous'])->name('rendezvous');
+        Route::get('/mes-consultations', [App\Http\Controllers\Patient\DemandeController::class, 'listeConsultation'])->name('consultations');
+
+
+            Route::get('/dossier-medical', [App\Http\Controllers\Patient\DossierMedicalController::class, 'index'])->name('dossier.index');
+            Route::get('/dossier-medical/{patient}', [App\Http\Controllers\Patient\DossierMedicalController::class, 'show'])->name('dossier.show');
+
     });
     Route::prefix('medecin')->name('medecin.')->middleware(['auth', 'role:medecin'])->group(function () {
     Route::get('/dashboard', [MedecinDashboardController::class, 'index'])->name('dashboard');

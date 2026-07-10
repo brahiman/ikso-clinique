@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
+use App\Models\Consultation;
 use App\Models\DemandeConsultation;
 use App\Models\Patient;
 use App\Models\RendezVous;
@@ -101,5 +102,17 @@ class DemandeController extends Controller
             ->get();
 
         return view('patient.rendezvous.index', compact('rendezVous'));
+    }
+
+    public function listeConsultation()
+    {
+        $patientIds = Auth::user()->patients->pluck('id'); // Tous les patients dont il est responsable
+
+        $consultations = Consultation::whereIn('patient_id', $patientIds)
+            ->with(['patient', 'medecin.user'])
+            ->latest()
+            ->get();
+
+        return view('patient.consultations.index', compact('consultations'));
     }
 }
