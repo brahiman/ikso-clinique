@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Medecin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Consultation;
+use App\Models\Medicament;
 use App\Models\RendezVous;
+use App\Models\TypeExamen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -139,11 +141,13 @@ class ConsultationController extends Controller
 
     public function show(Consultation $consultation)
     {
+        $medicaments=Medicament::all();
+        $typesExamens = TypeExamen::all();
         $medecin = Auth::user()->medecin;
         abort_if(!$medecin || $consultation->medecin_id !== $medecin->id, 403);
 
         $consultation->load('patient', 'rendezVous');
 
-        return view('medecin.consultations.show', compact('consultation'));
+        return view('medecin.consultations.show', compact('consultation', 'medicaments', 'typesExamens'));
     }
 }

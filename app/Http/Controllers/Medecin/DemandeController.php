@@ -17,7 +17,9 @@ class DemandeController extends Controller
 
         $filtre = $request->get('filtre', 'affectee');
 
+
         $query = DemandeConsultation::where('medecin_id', $medecin->id)->with('patient');
+       // dd($query);
 
         if ($filtre !== 'toutes') {
             $query->where('statut', $filtre);

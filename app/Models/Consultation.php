@@ -47,6 +47,10 @@ class Consultation extends Model
     {
         return $this->belongsTo(RendezVous::class);
     }
+    public function demandesExamens()
+    {
+        return $this->hasMany(DemandeExamen::class);
+    }
 
     // ====================== SCOPES DE SÉCURITÉ ======================
 

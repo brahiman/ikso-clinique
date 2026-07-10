@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Http\Controllers\Patient\DossierMedicalController;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,13 +13,11 @@ class DatabaseSeeder extends Seeder
             //SpecialiteSeeder::class,   // si tu en as un
             PatientSeeder::class,
             MedecinSeeder::class,
-            DossierMedicalController::class,
+            DossierMedicalSeeder::class,
+            AntecedentMedicalSeeder::class,
+          //  ExamenSeeder::class,
+           // OrdonnanceSeeder::class
         ]);
-        $this->call([
-            RolePermissionSeeder::class,
-           // MedecinSeeder::class,
-            PatientSeeder::class,
-
-        ]);
+      
     }
 }
