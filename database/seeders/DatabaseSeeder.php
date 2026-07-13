@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
             //SpecialiteSeeder::class,   // si tu en as un
             PatientSeeder::class,
             MedecinSeeder::class,
-            DossierMedicalController::class,
+            DossierMedicalSeeder::class,
         ]);
     }
 }
