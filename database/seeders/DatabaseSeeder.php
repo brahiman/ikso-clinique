@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             AntecedentMedicalSeeder::class,
           //  ExamenSeeder::class,
            // OrdonnanceSeeder::class
+           MedicamentSeeder::class,
+           TypeExamenSeeder::class,
         ]);
       
     }

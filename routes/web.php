@@ -101,6 +101,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/consultations/{consultation}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
     Route::put('/consultations/{consultation}', [ConsultationController::class, 'update'])->name('consultations.update');
     Route::get('/consultations/{consultation}', [ConsultationController::class, 'show'])->name('consultations.show');
+    //routes pour  creer les ordonnances et les examens complémentaires
+    Route::post('/consultations/{consultation}/ordonnances', [ConsultationController::class, 'storeOrdonnance'])->name('consultations.ordonnances.store');
+    Route::post('/consultations/{consultation}/examens', [ConsultationController::class, 'storeDemandeExamen'])->name('consultations.examens.store');
     Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
     Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
     Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');

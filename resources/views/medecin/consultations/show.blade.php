@@ -98,12 +98,58 @@
     <i class="fas fa-vials"></i>
     Demande d'examens
 </button>
-            {{-- modal pour ordonance --}}
+
+{{-- Liste des examens liés à la consultation --}}
+<p>Liste des demandes d'examens :</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Type d'Examen</th>
+            <th>Date</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($consultation->demandesExamens as $examen)
+            <tr>
+                <td>{{ $examen->typeExamen->nom }}</td>
+                <td>{{ $examen->date }}</td>
+                <td>{{ $examen->statut }}</td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+
+{{-- liste des ordonnances  liées à la consultation --}}
+<p>Liste des ordonnances :</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Médicament</th>
+            <th>Posologie</th>
+            <th>Durée</th>
+            <th>Instructions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($consultation->ordonnances as $ordonnance)
+            <tr>
+                <td>{{ $ordonnance->medicament->nom }}</td>
+                <td>{{ $ordonnance->posologie }}</td>
+                <td>{{ $ordonnance->duree }}</td>
+                <td>{{ $ordonnance->instructions ?? 'Non renseigné' }}</td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+
+
+{{-- modal pour ordonance --}}
             <div class="modal fade" id="prescrireOrdonnanceModal" tabindex="-1" aria-labelledby="prescrireOrdonnanceModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
 
-                        <form action="" method="POST">
+                        <form action="{{ route('medecin.consultations.ordonnances.store', $consultation->id) }}" method="POST">
                             @csrf
 
                             <input type="hidden" name="consultation_id" value="{{ $consultation->id }}">
@@ -231,7 +277,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
 
-                        <form action="" method="POST">
+                        <form action="{{ route('medecin.consultations.examens.store', $consultation->id) }}" method="POST">
                             @csrf
 
                             <input type="hidden" name="consultation_id" value="{{ $consultation->id }}">

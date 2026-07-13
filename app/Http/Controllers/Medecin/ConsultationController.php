@@ -146,8 +146,48 @@ class ConsultationController extends Controller
         $medecin = Auth::user()->medecin;
         abort_if(!$medecin || $consultation->medecin_id !== $medecin->id, 403);
 
-        $consultation->load('patient', 'rendezVous');
+        $consultation->load('patient', 'rendezVous','ordonnances','demandesExamens');
 
         return view('medecin.consultations.show', compact('consultation', 'medicaments', 'typesExamens'));
+    }
+    //fonction pour stocker les ordonnances et les examens complementaires
+    public function storeOrdonnance(Request $request, Consultation $consultation)
+    {
+        dd('ordonnance');
+        $medecin = Auth::user()->medecin;
+        abort_if(!$medecin || $consultation->medecin_id !== $medecin->id, 403);
+
+        $validated = $request->validate([
+            'medicament_id' => 'required|exists:medicaments,id',
+            'posologie' => 'required|string',
+            'duree' => 'required|string',
+            'instructions' => 'nullable|string',
+        ]);
+
+        $consultation->ordonnances()->create($validated);
+
+        return redirect()->route('medecin.consultations.show', $consultation)
+            ->with('success', 'Ordonnance ajoutée avec succès.');
+    }
+
+    public function storeDemandeExamen(Request $request, Consultation $consultation)
+    {
+        $medecin = Auth::user()->medecin;
+        abort_if(!$medecin || $consultation->medecin_id !== $medecin->id, 403);
+        
+        $validated = $request->validate([
+            'type_examen' => 'required|string',
+            'description' => 'nullable|string',
+            'resultats' => 'nullable|string',
+            'date_demande' => 'required|date',
+            'date_resultat' => 'nullable|date|after_or_equal:date_demande',
+            'statut' => 'required|in:en_cours,termine',
+            ]);
+            
+            dd($request->all());
+        $consultation->demandesExamens()->create($validated);
+
+        return redirect()->route('medecin.consultations.show', $consultation)
+            ->with('success', 'Examen complémentaire ajouté avec succès.');
     }
 }
