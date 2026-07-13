@@ -7,6 +7,7 @@ use App\Models\Medecin;
 use App\Models\Specialite;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 
@@ -332,4 +333,43 @@ class UserController extends Controller
 
         return back()->with('success', 'Le mot de passe de l\'utilisateur a été réinitialisé avec succès.');
     }
+
+    public function passwordChange()
+    {
+        return view('auth.password-change');
+    }
+
+    public function passwordUpdate()
+    {
+        $data = request()->validate(
+            [
+                'password_old' => 'required',
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
+            ],
+            [
+                'password_old.required' => 'Veuillez renseigner votre mot de passe actuel.',
+                'password.required' => 'Veuillez renseigner votre nouveau mot de passe.',
+                'password.min' => 'Le nouveau mot de passe doit contenir au moins 8 caractères.',
+                'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+            ]
+        );
+
+        $user = auth()->user();
+
+        if (!Hash::check($data['password_old'], $user->password)) {
+            return back()
+                ->withErrors([
+                    'password_old' => 'Le mot de passe actuel est incorrect.',
+                ])
+                ->withInput();
+        }
+
+        $user->update([
+            'password' => Hash::make($data['password']),
+        ]);
+
+        return back()->with('success', 'Votre mot de passe a été modifié avec succès.');
+    }
+
+
 }

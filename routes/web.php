@@ -6,7 +6,6 @@ use App\Http\Controllers\Medecin\ConsultationController;
 use App\Http\Controllers\Medecin\DemandeController;
 use App\Http\Controllers\Medecin\MedecinDashboardController;
 use App\Http\Controllers\Medecin\RendezVousController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -112,9 +111,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // Profil
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/user/{id}/profil/', [UserController::class, 'show'])->name('users.profil');
+    Route::get('/user/password/change/', [UserController::class, 'passwordChange'])->name('users.passwordChange');
+    Route::post('/user/{id}/password/update/', [UserController::class, 'passwordUpdate'])->name('users.passwordUpdate');
 });
 
 require __DIR__ . '/auth.php';
