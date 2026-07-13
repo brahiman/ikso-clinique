@@ -8,6 +8,7 @@ use App\Models\Specialite;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 
@@ -57,6 +58,7 @@ class UserController extends Controller
                 'sexe' => 'nullable|in:M,F,Autre',
                 'matricule' => 'nullable|string|unique:users,matricule',
                 'is_active' => 'nullable|boolean',
+                'avatar' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
                 'roles' => 'required|array',
                 'roles.*' => 'exists:roles,id',
                 'specialites' => 'nullable|array',
@@ -84,6 +86,10 @@ class UserController extends Controller
                 'matricule.string' => 'Le matricule doit être une chaîne de caractères.',
 
                 'is_active.boolean' => 'Le statut actif/inactif est invalide.',
+
+                'avatar.image' => 'Le fichier doit être une image.',
+                'avatar.mimes' => 'Formats acceptés : jpeg, jpg, png, webp.',
+                'avatar.max' => 'L\'image ne doit pas dépasser 2 Mo.',
 
                 'roles.required' => 'Veuillez sélectionner au moins un rôle.',
                 'roles.array' => 'Le format des rôles sélectionnés est invalide.',
@@ -116,7 +122,14 @@ class UserController extends Controller
             $default_password = 'passwordPatient123';
         }
 
-        $user = DB::transaction(function () use ($data, $estMedecin, $default_password) {
+        // Stocke l'avatar sur le disque public (storage/app/public/avatars)
+        // et récupère le chemin relatif à sauvegarder en base (ex: avatars/xxxx.jpg).
+        $avatarPath = null;
+        if (request()->hasFile('avatar')) {
+            $avatarPath = request()->file('avatar')->store('avatars', 'public');
+        }
+
+        $user = DB::transaction(function () use ($data, $estMedecin, $default_password, $avatarPath) {
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
@@ -126,6 +139,7 @@ class UserController extends Controller
                 'sexe' => $data['sexe'] ?? null,
                 'matricule' => $data['matricule'] ?? null,
                 'is_active' => $data['is_active'] ?? true,
+                'avatar' => $avatarPath,
                 'password' => bcrypt($default_password),
             ]);
 
@@ -182,6 +196,7 @@ class UserController extends Controller
                     Rule::unique('users', 'matricule')->ignore($user->id)
                 ],
                 'is_active' => 'nullable|boolean',
+                'avatar' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
                 'roles' => 'required|array',
                 'roles.*' => 'exists:roles,id',
                 'specialites' => 'required_if:roles.*,' . $medecinRoleId . '|array',
@@ -211,6 +226,10 @@ class UserController extends Controller
 
                 'is_active.boolean' => 'Le statut sélectionné est invalide.',
 
+                'avatar.image' => 'Le fichier doit être une image.',
+                'avatar.mimes' => 'Formats acceptés : jpeg, jpg, png, webp.',
+                'avatar.max' => 'L\'image ne doit pas dépasser 2 Mo.',
+
                 'roles.required' => 'Veuillez sélectionner au moins un rôle.',
                 'roles.array' => 'Les rôles sélectionnés sont invalides.',
                 'roles.*.exists' => 'Un rôle sélectionné n\'existe pas.',
@@ -229,7 +248,17 @@ class UserController extends Controller
                 ->withInput();
         }
 
-        DB::transaction(function () use ($user, $data, $estMedecin) {
+        // Si un nouvel avatar est envoyé : on supprime l'ancien fichier (s'il existe)
+        // et on stocke le nouveau. Si aucun fichier n'est envoyé, on conserve l'avatar actuel.
+        $avatarPath = $user->avatar;
+        if (request()->hasFile('avatar')) {
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+            $avatarPath = request()->file('avatar')->store('avatars', 'public');
+        }
+
+        DB::transaction(function () use ($user, $data, $estMedecin, $avatarPath) {
             $user->update([
                 'name' => $data['name'],
                 'email' => $data['email'],
@@ -239,6 +268,7 @@ class UserController extends Controller
                 'sexe' => $data['sexe'] ?? null,
                 'matricule' => $data['matricule'] ?? null,
                 'is_active' => $data['is_active'] ?? true,
+                'avatar' => $avatarPath,
             ]);
 
             $user->roles()->sync($data['roles']);
@@ -304,6 +334,11 @@ class UserController extends Controller
         $user = User::withTrashed()->findOrFail($id);
 
         DB::transaction(function () use ($user) {
+            // Suppression définitive du fichier avatar sur le disque, s'il existe
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
             Medecin::withTrashed()->where('user_id', $user->id)->first()?->forceDelete();
             $user->forceDelete();
         });

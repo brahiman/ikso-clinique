@@ -20,7 +20,9 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+                    {{-- enctype="multipart/form-data" est indispensable pour l'envoi du fichier avatar --}}
+                    <form action="{{ route('admin.users.update', $user->id) }}" method="POST"
+                          enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -141,6 +143,27 @@
                             </select>
                         </div>
 
+                        <div class="mb-3 text-center">
+                            <label class="form-label d-block">Avatar</label>
+                            <img id="avatar-preview"
+                                 src="{{ $user->avatar ? asset('storage/'.$user->avatar) : asset('assets/images/users/user-dummy.jpg') }}"
+                                 alt="Aperçu de l'avatar"
+                                 class="rounded-circle mb-2"
+                                 style="width:110px;height:110px;object-fit:cover;border:1px solid #eef0f2;">
+                            <div>
+                                <input class="form-control @error('avatar') is-invalid @enderror"
+                                       type="file" name="avatar" id="avatar-input"
+                                       accept="image/png,image/jpeg,image/webp"
+                                       style="max-width:320px;margin:0 auto;">
+                                <div class="form-text">JPEG, PNG ou WEBP — 2 Mo maximum. Laissez vide pour conserver
+                                    l'avatar actuel.
+                                </div>
+                                @error('avatar')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-outline-success">
                             Mettre à jour
                         </button>
@@ -178,6 +201,19 @@
 
             // Affiche le bloc dès le chargement si "médecin" est déjà coché
             toggleSpecialites();
+
+            // --- Aperçu instantané du nouvel avatar sélectionné ---
+            const avatarInput = document.getElementById('avatar-input');
+            const avatarPreview = document.getElementById('avatar-preview');
+
+            avatarInput.addEventListener('change', function () {
+                const fichier = this.files[0];
+                if (!fichier) return;
+
+                const lecteur = new FileReader();
+                lecteur.onload = e => avatarPreview.src = e.target.result;
+                lecteur.readAsDataURL(fichier);
+            });
         });
     </script>
 @endpush

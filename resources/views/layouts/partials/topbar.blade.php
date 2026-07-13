@@ -64,7 +64,8 @@
                     <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                             data-bs-toggle="dropdown">
                         <img class="rounded-circle header-profile-user"
-                             src="{{ asset('assets/images/users/avatar-2.jpg') }}" alt="Avatar">
+                             src="{{  Auth::user()->avatar ? asset('storage/'. Auth::user()->avatar) : asset('assets/images/users/avatar-2.jpg') }}"
+                             alt="Avatar">
                         <span class="d-none d-xl-inline-block ms-1">{{ Auth::user()->name ?? 'Utilisateur' }}</span>
                         <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                     </button>

@@ -13,6 +13,13 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <h5>Détails de l'utilisateur</h5>
+                            <div class="mb-3 text-center">
+                                <img id="avatar-preview"
+                                     src="{{ $user->avatar ? asset('storage/'.$user->avatar) : asset('assets/images/users/user-dummy.jpg') }}"
+                                     alt="Aucune photo"
+                                     class="rounded-circle mb-2"
+                                     style="width:110px;height:110px;object-fit:cover;border:1px solid #eef0f2;">
+                            </div>
                             <p><strong>Nom complet :</strong> {{ $user->name ?? '' }}</p>
                             <p><strong>Email :</strong> {{ $user->email ?? '' }}</p>
                             <p><strong>Téléphone :</strong> {{ $user->telephone ?? '' }}</p>
