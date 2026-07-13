@@ -76,5 +76,8 @@ class MedecinSeeder extends Seeder
         );
 
         $this->command->info('✅ Médecins et Spécialités créés avec succès !');
+
+        //creer quelque medicaments
+        
     }
 }

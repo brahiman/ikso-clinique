@@ -54,13 +54,13 @@
                     </li>
 
                     <li>
-                        <a href="{{ route('secretaire.demandes.index') }}" class="waves-effect">
-                            <i class="ri-file-list-3-line"></i>
-                            <span>Demandes de Consultation</span>
+                        <a href="#" class="waves-effect">
+                            <i class="ri-user-line"></i>
+                            <span>Patients</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="" class="waves-effect">
                             <i class="ri-calendar-check-line"></i>
                             <span>Rendez-vous</span>
                         </a>
@@ -76,13 +76,13 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="{{ route('medecin.rendez-vous.index') }}" class="waves-effect">
                             <i class="ri-calendar-event-line"></i>
                             <span>Mon Agenda</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="{{ route('medecin.consultations.index') }}" class="waves-effect">
                             <i class="ri-file-medical-line"></i>
                             <span>Mes Consultations</span>
                         </a>

@@ -20,6 +20,9 @@ class Ordonnance extends Model
         'notes'
     ];
 
+    protected $casts = [
+        'date_prescription' => 'date',
+    ];
     public function patient()
     {
         return $this->belongsTo(Patient::class);
@@ -34,9 +37,14 @@ class Ordonnance extends Model
     {
         return $this->belongsTo(Consultation::class);
     }
-
-
-    protected $casts = [
-        'date_prescription' => 'date',
-    ];
+    public function medicaments()
+    {
+        //ici la table intermediaire sappele :ordonnance_details
+        return $this->belongsToMany(Medicament::class, 'medicament_ordonnance', 'ordonnance_id', 'medicament_id')
+                    ->withPivot('quantite', 'posologie', 'duree_jours');
+    }
+    public function details()
+    {
+        return $this->hasMany(OrdonnanceDetail::class);
+    }
 }

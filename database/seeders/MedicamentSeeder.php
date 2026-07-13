@@ -1,0 +1,198 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class MedicamentSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        DB::table('medicaments')->insert([
+            [
+                'nom' => 'Paracétamol',
+                'forme' => 'Comprimé',
+                'dosage' => '500 mg',
+                'fabricant' => 'Sanofi',
+                'description' => 'Antalgique et antipyrétique.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Ibuprofène',
+                'forme' => 'Comprimé',
+                'dosage' => '400 mg',
+                'fabricant' => 'Abbott',
+                'description' => 'Anti-inflammatoire non stéroïdien.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Amoxicilline',
+                'forme' => 'Gélule',
+                'dosage' => '500 mg',
+                'fabricant' => 'GlaxoSmithKline',
+                'description' => 'Antibiotique de la famille des pénicillines.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Ciprofloxacine',
+                'forme' => 'Comprimé',
+                'dosage' => '500 mg',
+                'fabricant' => 'Bayer',
+                'description' => 'Antibiotique fluoroquinolone.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Metformine',
+                'forme' => 'Comprimé',
+                'dosage' => '850 mg',
+                'fabricant' => 'Merck',
+                'description' => 'Traitement du diabète de type 2.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Oméprazole',
+                'forme' => 'Gélule',
+                'dosage' => '20 mg',
+                'fabricant' => 'AstraZeneca',
+                'description' => 'Inhibiteur de la pompe à protons.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Amlodipine',
+                'forme' => 'Comprimé',
+                'dosage' => '5 mg',
+                'fabricant' => 'Pfizer',
+                'description' => 'Antihypertenseur.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Losartan',
+                'forme' => 'Comprimé',
+                'dosage' => '50 mg',
+                'fabricant' => 'Merck',
+                'description' => 'Traitement de l’hypertension artérielle.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Salbutamol',
+                'forme' => 'Inhalateur',
+                'dosage' => '100 µg',
+                'fabricant' => 'GlaxoSmithKline',
+                'description' => 'Bronchodilatateur pour l’asthme.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Insuline rapide',
+                'forme' => 'Injection',
+                'dosage' => '100 UI/ml',
+                'fabricant' => 'Novo Nordisk',
+                'description' => 'Traitement du diabète.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Diazépam',
+                'forme' => 'Comprimé',
+                'dosage' => '5 mg',
+                'fabricant' => 'Roche',
+                'description' => 'Anxiolytique et anticonvulsivant.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Tramadol',
+                'forme' => 'Gélule',
+                'dosage' => '50 mg',
+                'fabricant' => 'Grünenthal',
+                'description' => 'Antalgique opioïde.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Ceftriaxone',
+                'forme' => 'Injection',
+                'dosage' => '1 g',
+                'fabricant' => 'Roche',
+                'description' => 'Antibiotique injectable.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Métronidazole',
+                'forme' => 'Comprimé',
+                'dosage' => '500 mg',
+                'fabricant' => 'Sanofi',
+                'description' => 'Antibiotique et antiparasitaire.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Furosémide',
+                'forme' => 'Comprimé',
+                'dosage' => '40 mg',
+                'fabricant' => 'Sanofi',
+                'description' => 'Diurétique.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Prednisolone',
+                'forme' => 'Comprimé',
+                'dosage' => '20 mg',
+                'fabricant' => 'Pfizer',
+                'description' => 'Corticoïde anti-inflammatoire.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Loratadine',
+                'forme' => 'Comprimé',
+                'dosage' => '10 mg',
+                'fabricant' => 'Bayer',
+                'description' => 'Antihistaminique.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Vitamine C',
+                'forme' => 'Comprimé effervescent',
+                'dosage' => '1000 mg',
+                'fabricant' => 'UPSA',
+                'description' => 'Complément vitaminique.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Acide folique',
+                'forme' => 'Comprimé',
+                'dosage' => '5 mg',
+                'fabricant' => 'Sanofi',
+                'description' => 'Vitamine B9.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom' => 'Artésunate',
+                'forme' => 'Injection',
+                'dosage' => '60 mg',
+                'fabricant' => 'Guilin Pharma',
+                'description' => 'Antipaludique utilisé dans le traitement du paludisme grave.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+    }
+}

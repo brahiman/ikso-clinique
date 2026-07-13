@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Consultation extends Model
 {
@@ -46,6 +47,14 @@ class Consultation extends Model
     {
         return $this->belongsTo(RendezVous::class);
     }
+    public function demandesExamens()
+    {
+        return $this->hasMany(DemandeExamen::class);
+    }
+    public function ordonnances()
+    {
+        return $this->hasMany(Ordonnance::class);
+    }   
 
     // ====================== SCOPES DE SÉCURITÉ ======================
 

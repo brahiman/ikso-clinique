@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Http\Controllers\Patient\DossierMedicalController;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,6 +14,13 @@ class DatabaseSeeder extends Seeder
             PatientSeeder::class,
             MedecinSeeder::class,
             DossierMedicalSeeder::class,
+            AntecedentMedicalSeeder::class,
+          //  ExamenSeeder::class,
+           // OrdonnanceSeeder::class
+           MedicamentSeeder::class,
+           TypeExamenSeeder::class,
+
         ]);
+
     }
 }

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->foreignId('medecin_id')->constrained()->onDelete('cascade');
-            $table->foreignId('demande_consultation_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('demande_consultation_id')->nullable()->constrained('demandes_consultations')->onDelete('set null');
             $table->dateTime('date_heure');
             $table->integer('duree')->default(30); // en minutes
             $table->enum('statut', ['planifie', 'confirme', 'en_cours', 'termine', 'annule', 'reporte'])->default('planifie');
