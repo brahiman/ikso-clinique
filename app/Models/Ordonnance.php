@@ -37,11 +37,21 @@ class Ordonnance extends Model
     {
         return $this->belongsTo(Consultation::class);
     }
-    public function medicaments()
+   public function medicaments()
     {
-        //ici la table intermediaire sappele :ordonnance_details
-        return $this->belongsToMany(Medicament::class, 'medicament_ordonnance', 'ordonnance_id', 'medicament_id')
-                    ->withPivot('quantite', 'posologie', 'duree_jours');
+        return $this->belongsToMany(
+            Medicament::class,
+            'ordonnance_details',
+            'ordonnance_id',
+            'medicament_id'
+        )->withPivot(
+            'dosage_prescrit',
+            'quantite',
+            'frequence',
+            'moment',
+            'duree_jours',
+            'instructions'
+        );
     }
     public function details()
     {
