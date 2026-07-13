@@ -3,6 +3,7 @@
 use App\Http\Controllers\Medecin\ConsultationController;
 use App\Http\Controllers\Medecin\DemandeController;
 use App\Http\Controllers\Medecin\MedecinDashboardController;
+use App\Http\Controllers\Medecin\PatientController;
 use App\Http\Controllers\Medecin\RendezVousController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -107,6 +108,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
     Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
     Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');
+    //Route pour la gestion des patients
+    Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
+    Route::get('/patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
+    Route::post('/patients/{patient}/dossier-medical', [PatientController::class, 'storeDossierMedical'])->name('patients.dossier.store');
+
 });
 
     // Profil

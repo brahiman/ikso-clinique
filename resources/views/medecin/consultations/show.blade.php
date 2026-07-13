@@ -92,229 +92,260 @@
                 Prescrire une ordonnance
             </button>
             <button type="button"
-        class="btn btn-info"
-        data-bs-toggle="modal"
-        data-bs-target="#demandeExamenModal">
-    <i class="fas fa-vials"></i>
-    Demande d'examens
-</button>
+                    class="btn btn-info"
+                    data-bs-toggle="modal"
+                    data-bs-target="#demandeExamenModal">
+                <i class="fas fa-vials"></i>
+                Demande d'examens
+            </button>
 
-{{-- Liste des examens liés à la consultation --}}
-<p>Liste des demandes d'examens :</p>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>N°</th>
-            <th>Date de la demande</th>
-            <th>Statut</th>
-            <th>Nombre d'examens</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @forelse($demandesExamens as $demande)
-            <tr>
-                <td>#{{ $demande->id }}</td>
-
-                <td>{{ \Carbon\Carbon::parse($demande->date_demande)->format('d/m/Y') }}</td>
-
-                <td>
-                    <span class="badge bg-info">
-                        {{ ucfirst(str_replace('_', ' ', $demande->statut)) }}
-                    </span>
-                </td>
-
-                <td>{{ $demande->details->count() }}</td>
-
-                <td>
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#demandeModal{{ $demande->id }}">
-                        <i class="fas fa-eye"></i> Voir les détails
+            {{-- ===== Onglets Examens / Ordonnances ===== --}}
+            <ul class="nav nav-tabs mt-4" id="dossierTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="examens-tab" data-bs-toggle="tab"
+                            data-bs-target="#examens-pane" type="button" role="tab"
+                            aria-controls="examens-pane" aria-selected="false">
+                        <i class="fas fa-vials"></i> Demandes d'examens
                     </button>
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="5" class="text-center">
-                    Aucune demande d'examen.
-                </td>
-            </tr>
-        @endforelse
-        {{ $demandesExamens->links() }}
-    </tbody>
-</table>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="ordonnances-tab" data-bs-toggle="tab"
+                            data-bs-target="#ordonnances-pane" type="button" role="tab"
+                            aria-controls="ordonnances-pane" aria-selected="false">
+                        <i class="fas fa-prescription"></i> Ordonnances
+                    </button>
+                </li>
+            </ul>
 
-{{-- Les modals sont générés après le tableau --}}
-@foreach($demandesExamens as $demande)
+            <div class="tab-content border border-top-0 p-3 mb-3" id="dossierTabsContent">
 
-<div class="modal fade" id="demandeModal{{ $demande->id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+                {{-- ===== Onglet Examens ===== --}}
+                <div class="tab-pane fade" id="examens-pane" role="tabpanel" aria-labelledby="examens-tab">
 
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    Demande d'examens #{{ $demande->id }}
-                </h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Date de la demande</th>
+                                <th>Statut</th>
+                                <th>Nombre d'examens</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"></button>
-            </div>
+                        <tbody>
+                            @forelse($demandesExamens as $demande)
+                                <tr>
+                                    <td>#{{ $demande->id }}</td>
 
-            <div class="modal-body">
+                                    <td>{{ \Carbon\Carbon::parse($demande->date_demande)->format('d/m/Y') }}</td>
 
-                <div class="mb-3">
-                    <strong>Instructions générales :</strong>
-                    <p class="mb-0">
-                        {{ $demande->instructions ?? 'Aucune instruction.' }}
-                    </p>
+                                    <td>
+                                        <span class="badge bg-info">
+                                            {{ ucfirst(str_replace('_', ' ', $demande->statut)) }}
+                                        </span>
+                                    </td>
+
+                                    <td>{{ $demande->details->count() }}</td>
+
+                                    <td>
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-primary"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#demandeModal{{ $demande->id }}">
+                                            <i class="fas fa-eye"></i> Voir les détails
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        Aucune demande d'examen.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+
+                    <div class="mt-3">
+                        {{ $demandesExamens->appends(request()->except('examens_page'))->links() }}
+                    </div>
                 </div>
 
-                <table class="table table-bordered">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Examen</th>
-                            <th>Observation</th>
-                            <th>Résultat</th>
-                            <th>Date résultat</th>
-                        </tr>
-                    </thead>
+                {{-- ===== Onglet Ordonnances ===== --}}
+                <div class="tab-pane fade" id="ordonnances-pane" role="tabpanel" aria-labelledby="ordonnances-tab">
 
-                    <tbody>
-                        @forelse($demande->details as $detail)
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
-                                <td>{{ $detail->typeExamen->nom }}</td>
-                                <td>{{ $detail->observation ?? '-' }}</td>
-                                <td>{{ $detail->resultat ?? '-' }}</td>
-                                <td>
-                                    {{ $detail->date_resultat
-                                        ? \Carbon\Carbon::parse($detail->date_resultat)->format('d/m/Y')
-                                        : '-' }}
-                                </td>
+                                <th>N°</th>
+                                <th>Date</th>
+                                <th>Médecin</th>
+                                <th>Nombre de médicaments</th>
+                                <th>Actions</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center">
-                                    Aucun examen demandé.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
 
-            </div>
+                        <tbody>
+                            @forelse($ordonnances as $ordonnance)
+                                <tr>
+                                    <td>#{{ $ordonnance->id }}</td>
+                                    <td>{{ $ordonnance->date_prescription->format('d/m/Y') }}</td>
+                                    <td>{{ $ordonnance->medecin->user->name }}</td>
+                                    <td>{{ $ordonnance->details->count() }}</td>
 
-            <div class="modal-footer">
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                    Fermer
-                </button>
-            </div>
+                                    <td>
+                                        <button
+                                            class="btn btn-sm btn-primary"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#ordonnanceModal{{ $ordonnance->id }}">
+                                            Voir les détails
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        Aucune ordonnance.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
 
-        </div>
-    </div>
-</div>
-
-@endforeach
-
-{{-- liste des ordonnances  liées à la consultation --}}
-<p>Liste des ordonnances :</p>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>N°</th>
-            <th>Date</th>
-            <th>Médecin</th>
-            <th>Nombre de médicaments</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @forelse($ordonnances as $ordonnance)
-            <tr>
-                <td>#{{ $ordonnance->id }}</td>
-                <td>{{ $ordonnance->date_prescription->format('d/m/Y') }}</td>
-                <td>{{ $ordonnance->medecin->user->name }}</td>
-                <td>{{ $ordonnance->details->count() }}</td>
-
-                <td>
-                    <button
-                        class="btn btn-sm btn-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#ordonnanceModal{{ $ordonnance->id }}">
-                        Voir les détails
-                    </button>
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="5" class="text-center">
-                    Aucune ordonnance.
-                </td>
-            </tr>
-        @endforelse
-        {{ $ordonnances->links() }}
-    </tbody>
-</table>
-    @foreach($ordonnances as $ordonnance)
-
-    <div class="modal fade" id="ordonnanceModal{{ $ordonnance->id }}" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        Ordonnance #{{ $ordonnance->id }}
-                    </h5>
-
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    <div class="mt-3">
+                        {{ $ordonnances->appends(request()->except('ordonnances_page'))->links() }}
+                    </div>
                 </div>
 
-            <div class="modal-body">
-
-        <div class="mb-3">
-            <strong>Instructions générales :</strong><br>
-            {{ $ordonnance->notes ?? 'Aucune instruction.' }}
-        </div>
-
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Médicament</th>
-                    <th>Quantité</th>
-                    <th>Fréquence</th>
-                    <th>Durée</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($ordonnance->details as $detail)
-                    <tr>
-                        <td>{{ $detail->medicament->nom }}</td>
-                        <td>{{ $detail->quantite }}</td>
-                        <td>{{ $detail->frequence }}</td>
-                        <td>{{ $detail->duree_jours }} jours</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-    </div>
             </div>
-        </div>
-    </div>
 
-    @endforeach
+            {{-- Les modals sont générés après les onglets --}}
+            @foreach($demandesExamens as $demande)
+
+            <div class="modal fade" id="demandeModal{{ $demande->id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                Demande d'examens #{{ $demande->id }}
+                            </h5>
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <strong>Instructions générales :</strong>
+                                <p class="mb-0">
+                                    {{ $demande->instructions ?? 'Aucune instruction.' }}
+                                </p>
+                            </div>
+
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Examen</th>
+                                        <th>Observation</th>
+                                        <th>Résultat</th>
+                                        <th>Date résultat</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @forelse($demande->details as $detail)
+                                        <tr>
+                                            <td>{{ $detail->typeExamen->nom }}</td>
+                                            <td>{{ $detail->observation ?? '-' }}</td>
+                                            <td>{{ $detail->resultat ?? '-' }}</td>
+                                            <td>
+                                                {{ $detail->date_resultat
+                                                    ? \Carbon\Carbon::parse($detail->date_resultat)->format('d/m/Y')
+                                                    : '-' }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center">
+                                                Aucun examen demandé.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                Fermer
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            @endforeach
+
+            @foreach($ordonnances as $ordonnance)
+
+            <div class="modal fade" id="ordonnanceModal{{ $ordonnance->id }}" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                Ordonnance #{{ $ordonnance->id }}
+                            </h5>
+
+                            <button class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <strong>Instructions générales :</strong><br>
+                                {{ $ordonnance->notes ?? 'Aucune instruction.' }}
+                            </div>
+
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Médicament</th>
+                                        <th>Quantité</th>
+                                        <th>Fréquence</th>
+                                        <th>Durée</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($ordonnance->details as $detail)
+                                        <tr>
+                                            <td>{{ $detail->medicament->nom }}</td>
+                                            <td>{{ $detail->quantite }}</td>
+                                            <td>{{ $detail->frequence }}</td>
+                                            <td>{{ $detail->duree_jours }} jours</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @endforeach
 
 
-{{-- modal pour ordonance --}}
+            {{-- modal pour ordonance --}}
             <div class="modal fade" id="prescrireOrdonnanceModal" tabindex="-1" aria-labelledby="prescrireOrdonnanceModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -440,7 +471,7 @@
 
                     </div>
                 </div>
-            </div> 
+            </div>
 
             {{-- modal pour examens --}}
             <div class="modal fade" id="demandeExamenModal" tabindex="-1" aria-labelledby="demandeExamenModalLabel" aria-hidden="true">
@@ -561,74 +592,95 @@
     </div>
 
 <script>
-        let index = 1;
+    // Gestion de l'onglet actif (par défaut Examens, ou selon la pagination utilisée)
+    document.addEventListener('DOMContentLoaded', function () {
+        const params = new URLSearchParams(window.location.search);
 
-        document.getElementById('addRow').addEventListener('click', function () {
+        let activeTabId = 'examens-tab';
+        let activePaneId = 'examens-pane';
 
-            let row = `
-            <tr>
+        if (params.has('ordonnances_page')) {
+            activeTabId = 'ordonnances-tab';
+            activePaneId = 'ordonnances-pane';
+        } else if (params.has('examens_page')) {
+            activeTabId = 'examens-tab';
+            activePaneId = 'examens-pane';
+        }
 
-                <td>
-                    <select class="form-select" name="medicaments[${index}][id]">
+        document.getElementById(activeTabId).classList.add('active');
+        document.getElementById(activePaneId).classList.add('show', 'active');
+    });
+</script>
 
-                        @foreach($medicaments as $medicament)
-                            <option value="{{ $medicament->id }}">
-                                {{ $medicament->nom }}
-                            </option>
-                        @endforeach
+<script>
+    let index = 1;
 
-                    </select>
-                </td>
+    document.getElementById('addRow').addEventListener('click', function () {
 
-                <td>
-                    <input type="number"
-                        class="form-control"
-                        name="medicaments[${index}][quantite]"
-                        min="1">
-                </td>
+        let row = `
+        <tr>
 
-                <td>
-                    <input type="text"
-                        class="form-control"
-                        name="medicaments[${index}][posologie]">
-                </td>
+            <td>
+                <select class="form-select" name="medicaments[${index}][id]">
 
-                <td>
-                    <input type="text"
-                        class="form-control"
-                        name="medicaments[${index}][duree]">
-                </td>
+                    @foreach($medicaments as $medicament)
+                        <option value="{{ $medicament->id }}">
+                            {{ $medicament->nom }}
+                        </option>
+                    @endforeach
 
-                <td class="text-center">
-                    <button type="button"
-                            class="btn btn-danger btn-sm removeRow">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
+                </select>
+            </td>
 
-            </tr>
-            `;
+            <td>
+                <input type="number"
+                    class="form-control"
+                    name="medicaments[${index}][quantite]"
+                    min="1">
+            </td>
 
-            document
-                .getElementById('medicamentsTable')
-                .insertAdjacentHTML('beforeend', row);
+            <td>
+                <input type="text"
+                    class="form-control"
+                    name="medicaments[${index}][posologie]">
+            </td>
 
-            index++;
-        });
+            <td>
+                <input type="text"
+                    class="form-control"
+                    name="medicaments[${index}][duree]">
+            </td>
 
-        document.addEventListener('click', function(e){
+            <td class="text-center">
+                <button type="button"
+                        class="btn btn-danger btn-sm removeRow">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
 
-            if(e.target.closest('.removeRow')){
+        </tr>
+        `;
 
-                let rows = document.querySelectorAll('#medicamentsTable tr');
+        document
+            .getElementById('medicamentsTable')
+            .insertAdjacentHTML('beforeend', row);
 
-                if(rows.length > 1){
-                    e.target.closest('tr').remove();
-                }
+        index++;
+    });
 
+    document.addEventListener('click', function(e){
+
+        if(e.target.closest('.removeRow')){
+
+            let rows = document.querySelectorAll('#medicamentsTable tr');
+
+            if(rows.length > 1){
+                e.target.closest('tr').remove();
             }
 
-        });
+        }
+
+    });
 </script>
 <script>
 
