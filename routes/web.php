@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\StatistiqueController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Medecin\ConsultationController;
 use App\Http\Controllers\Medecin\DemandeController;
 use App\Http\Controllers\Medecin\MedecinDashboardController;
@@ -29,6 +31,9 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::resource('/users', UserController::class);
+        Route::post('/users/{id}/password/reset', [UserController::class, 'passwordReset'])->name('users.passwordReset');
+        Route::resource('/statistiques', StatistiqueController::class)->only(['index', 'show']);
     });
 
     /*Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -81,30 +86,30 @@ Route::middleware('auth')->group(function () {
         Route::get('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'create'])->name('demandes.create');
         Route::post('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'store'])->name('demandes.store');
         Route::get('/mes-demandes', [App\Http\Controllers\Patient\DemandeController::class, 'index'])->name('demandes.index');
-        Route::get('/mes-rendez-vous',  [App\Http\Controllers\Patient\DemandeController::class, 'mesRendezVous'])->name('rendezvous');
+        Route::get('/mes-rendez-vous', [App\Http\Controllers\Patient\DemandeController::class, 'mesRendezVous'])->name('rendezvous');
         Route::get('/mes-consultations', [App\Http\Controllers\Patient\DemandeController::class, 'listeConsultation'])->name('consultations');
 
 
-            Route::get('/dossier-medical', [App\Http\Controllers\Patient\DossierMedicalController::class, 'index'])->name('dossier.index');
-            Route::get('/dossier-medical/{patient}', [App\Http\Controllers\Patient\DossierMedicalController::class, 'show'])->name('dossier.show');
+        Route::get('/dossier-medical', [App\Http\Controllers\Patient\DossierMedicalController::class, 'index'])->name('dossier.index');
+        Route::get('/dossier-medical/{patient}', [App\Http\Controllers\Patient\DossierMedicalController::class, 'show'])->name('dossier.show');
 
     });
     Route::prefix('medecin')->name('medecin.')->middleware(['auth', 'role:medecin'])->group(function () {
-    Route::get('/dashboard', [MedecinDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [MedecinDashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/rendez-vous', [RendezVousController::class, 'index'])->name('rendez-vous.index');
-    Route::patch('/rendez-vous/{rendezVous}/statut', [RendezVousController::class, 'updateStatut'])->name('rendez-vous.statut');
-    Route::post('/rendez-vous/{rendezVous}/demarrer', [RendezVousController::class, 'demarrerConsultation'])->name('rendez-vous.demarrer');
-    Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultations.index');
-    Route::get('/consultations/create', [ConsultationController::class, 'create'])->name('consultations.create');
-    Route::post('/consultations', [ConsultationController::class, 'store'])->name('consultations.store');
-    Route::get('/consultations/{consultation}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
-    Route::put('/consultations/{consultation}', [ConsultationController::class, 'update'])->name('consultations.update');
-    Route::get('/consultations/{consultation}', [ConsultationController::class, 'show'])->name('consultations.show');
-    Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
-    Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
-    Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');
-});
+        Route::get('/rendez-vous', [RendezVousController::class, 'index'])->name('rendez-vous.index');
+        Route::patch('/rendez-vous/{rendezVous}/statut', [RendezVousController::class, 'updateStatut'])->name('rendez-vous.statut');
+        Route::post('/rendez-vous/{rendezVous}/demarrer', [RendezVousController::class, 'demarrerConsultation'])->name('rendez-vous.demarrer');
+        Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultations.index');
+        Route::get('/consultations/create', [ConsultationController::class, 'create'])->name('consultations.create');
+        Route::post('/consultations', [ConsultationController::class, 'store'])->name('consultations.store');
+        Route::get('/consultations/{consultation}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
+        Route::put('/consultations/{consultation}', [ConsultationController::class, 'update'])->name('consultations.update');
+        Route::get('/consultations/{consultation}', [ConsultationController::class, 'show'])->name('consultations.show');
+        Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
+        Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
+        Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');
+    });
 
     // Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -112,4 +117,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

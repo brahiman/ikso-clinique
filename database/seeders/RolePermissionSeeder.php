@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use App\Models\User;
+use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -105,6 +105,7 @@ class RolePermissionSeeder extends Seeder
             ['email' => 'dr.diallo@clinique.com'],
             [
                 'name' => 'Dr. Amadou Diallo',
+                'matricule' => 'MED001',
                 'password' => bcrypt('password123'),
                 'telephone' => '0700000002',
                 'is_active' => true,

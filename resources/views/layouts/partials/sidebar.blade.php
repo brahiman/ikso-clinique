@@ -26,8 +26,8 @@
                             <span>Utilisateurs</span>
                         </a>
                         <ul class="sub-menu">
-                            <li><a href="#">Liste des utilisateurs</a></li>
-                            <li><a href="#">Ajouter un utilisateur</a></li>
+                            <li><a href="{{ route('admin.users.index') }}">Liste des utilisateurs</a></li>
+                            <li><a href="{{ route('admin.users.create') }}">Ajouter un utilisateur</a></li>
                         </ul>
                     </li>
                     <li>
@@ -37,7 +37,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="{{ route('admin.statistiques.index') }}" class="waves-effect">
                             <i class="ri-bar-chart-box-line"></i>
                             <span>Statistiques</span>
                         </a>
