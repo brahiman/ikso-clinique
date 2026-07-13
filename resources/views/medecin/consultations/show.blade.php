@@ -98,12 +98,228 @@
     <i class="fas fa-vials"></i>
     Demande d'examens
 </button>
-            {{-- modal pour ordonance --}}
+
+{{-- Liste des examens liés à la consultation --}}
+<p>Liste des demandes d'examens :</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>N°</th>
+            <th>Date de la demande</th>
+            <th>Statut</th>
+            <th>Nombre d'examens</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @forelse($demandesExamens as $demande)
+            <tr>
+                <td>#{{ $demande->id }}</td>
+
+                <td>{{ \Carbon\Carbon::parse($demande->date_demande)->format('d/m/Y') }}</td>
+
+                <td>
+                    <span class="badge bg-info">
+                        {{ ucfirst(str_replace('_', ' ', $demande->statut)) }}
+                    </span>
+                </td>
+
+                <td>{{ $demande->details->count() }}</td>
+
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#demandeModal{{ $demande->id }}">
+                        <i class="fas fa-eye"></i> Voir les détails
+                    </button>
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="5" class="text-center">
+                    Aucune demande d'examen.
+                </td>
+            </tr>
+        @endforelse
+        {{ $demandesExamens->links() }}
+    </tbody>
+</table>
+
+{{-- Les modals sont générés après le tableau --}}
+@foreach($demandesExamens as $demande)
+
+<div class="modal fade" id="demandeModal{{ $demande->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Demande d'examens #{{ $demande->id }}
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="mb-3">
+                    <strong>Instructions générales :</strong>
+                    <p class="mb-0">
+                        {{ $demande->instructions ?? 'Aucune instruction.' }}
+                    </p>
+                </div>
+
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Examen</th>
+                            <th>Observation</th>
+                            <th>Résultat</th>
+                            <th>Date résultat</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse($demande->details as $detail)
+                            <tr>
+                                <td>{{ $detail->typeExamen->nom }}</td>
+                                <td>{{ $detail->observation ?? '-' }}</td>
+                                <td>{{ $detail->resultat ?? '-' }}</td>
+                                <td>
+                                    {{ $detail->date_resultat
+                                        ? \Carbon\Carbon::parse($detail->date_resultat)->format('d/m/Y')
+                                        : '-' }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    Aucun examen demandé.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Fermer
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@endforeach
+
+{{-- liste des ordonnances  liées à la consultation --}}
+<p>Liste des ordonnances :</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>N°</th>
+            <th>Date</th>
+            <th>Médecin</th>
+            <th>Nombre de médicaments</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @forelse($ordonnances as $ordonnance)
+            <tr>
+                <td>#{{ $ordonnance->id }}</td>
+                <td>{{ $ordonnance->date_prescription->format('d/m/Y') }}</td>
+                <td>{{ $ordonnance->medecin->user->name }}</td>
+                <td>{{ $ordonnance->details->count() }}</td>
+
+                <td>
+                    <button
+                        class="btn btn-sm btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#ordonnanceModal{{ $ordonnance->id }}">
+                        Voir les détails
+                    </button>
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="5" class="text-center">
+                    Aucune ordonnance.
+                </td>
+            </tr>
+        @endforelse
+        {{ $ordonnances->links() }}
+    </tbody>
+</table>
+    @foreach($ordonnances as $ordonnance)
+
+    <div class="modal fade" id="ordonnanceModal{{ $ordonnance->id }}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Ordonnance #{{ $ordonnance->id }}
+                    </h5>
+
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+            <div class="modal-body">
+
+        <div class="mb-3">
+            <strong>Instructions générales :</strong><br>
+            {{ $ordonnance->notes ?? 'Aucune instruction.' }}
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Médicament</th>
+                    <th>Quantité</th>
+                    <th>Fréquence</th>
+                    <th>Durée</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($ordonnance->details as $detail)
+                    <tr>
+                        <td>{{ $detail->medicament->nom }}</td>
+                        <td>{{ $detail->quantite }}</td>
+                        <td>{{ $detail->frequence }}</td>
+                        <td>{{ $detail->duree_jours }} jours</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+    </div>
+            </div>
+        </div>
+    </div>
+
+    @endforeach
+
+
+{{-- modal pour ordonance --}}
             <div class="modal fade" id="prescrireOrdonnanceModal" tabindex="-1" aria-labelledby="prescrireOrdonnanceModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
 
-                        <form action="" method="POST">
+                        <form action="{{ route('medecin.consultations.ordonnances.store', $consultation->id) }}" method="POST">
                             @csrf
 
                             <input type="hidden" name="consultation_id" value="{{ $consultation->id }}">
@@ -231,7 +447,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
 
-                        <form action="" method="POST">
+                        <form action="{{ route('medecin.consultations.examens.store', $consultation->id) }}" method="POST">
                             @csrf
 
                             <input type="hidden" name="consultation_id" value="{{ $consultation->id }}">

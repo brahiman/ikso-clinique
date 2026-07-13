@@ -133,30 +133,33 @@ Route::middleware('auth')->group(function () {
         Route::get('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'create'])->name('demandes.create');
         Route::post('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'store'])->name('demandes.store');
         Route::get('/mes-demandes', [App\Http\Controllers\Patient\DemandeController::class, 'index'])->name('demandes.index');
-        Route::get('/mes-rendez-vous', [App\Http\Controllers\Patient\DemandeController::class, 'mesRendezVous'])->name('rendezvous');
+        Route::get('/mes-rendez-vous',  [App\Http\Controllers\Patient\DemandeController::class, 'mesRendezVous'])->name('rendezvous');
         Route::get('/mes-consultations', [App\Http\Controllers\Patient\DemandeController::class, 'listeConsultation'])->name('consultations');
 
 
-        Route::get('/dossier-medical', [App\Http\Controllers\Patient\DossierMedicalController::class, 'index'])->name('dossier.index');
-        Route::get('/dossier-medical/{patient}', [App\Http\Controllers\Patient\DossierMedicalController::class, 'show'])->name('dossier.show');
+            Route::get('/dossier-medical', [App\Http\Controllers\Patient\DossierMedicalController::class, 'index'])->name('dossier.index');
+            Route::get('/dossier-medical/{patient}', [App\Http\Controllers\Patient\DossierMedicalController::class, 'show'])->name('dossier.show');
 
     });
     Route::prefix('medecin')->name('medecin.')->middleware(['auth', 'role:medecin'])->group(function () {
         Route::get('/dashboard', [MedecinDashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('/rendez-vous', [RendezVousController::class, 'index'])->name('rendez-vous.index');
-        Route::patch('/rendez-vous/{rendezVous}/statut', [RendezVousController::class, 'updateStatut'])->name('rendez-vous.statut');
-        Route::post('/rendez-vous/{rendezVous}/demarrer', [RendezVousController::class, 'demarrerConsultation'])->name('rendez-vous.demarrer');
-        Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultations.index');
-        Route::get('/consultations/create', [ConsultationController::class, 'create'])->name('consultations.create');
-        Route::post('/consultations', [ConsultationController::class, 'store'])->name('consultations.store');
-        Route::get('/consultations/{consultation}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
-        Route::put('/consultations/{consultation}', [ConsultationController::class, 'update'])->name('consultations.update');
-        Route::get('/consultations/{consultation}', [ConsultationController::class, 'show'])->name('consultations.show');
-        Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
-        Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
-        Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');
-    });
+    Route::get('/rendez-vous', [RendezVousController::class, 'index'])->name('rendez-vous.index');
+    Route::patch('/rendez-vous/{rendezVous}/statut', [RendezVousController::class, 'updateStatut'])->name('rendez-vous.statut');
+    Route::post('/rendez-vous/{rendezVous}/demarrer', [RendezVousController::class, 'demarrerConsultation'])->name('rendez-vous.demarrer');
+    Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultations.index');
+    Route::get('/consultations/create', [ConsultationController::class, 'create'])->name('consultations.create');
+    Route::post('/consultations', [ConsultationController::class, 'store'])->name('consultations.store');
+    Route::get('/consultations/{consultation}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
+    Route::put('/consultations/{consultation}', [ConsultationController::class, 'update'])->name('consultations.update');
+    Route::get('/consultations/{consultation}', [ConsultationController::class, 'show'])->name('consultations.show');
+    //routes pour  creer les ordonnances et les examens complémentaires
+    Route::post('/consultations/{consultation}/ordonnances', [ConsultationController::class, 'storeOrdonnance'])->name('consultations.ordonnances.store');
+    Route::post('/consultations/{consultation}/examens', [ConsultationController::class, 'storeDemandeExamen'])->name('consultations.examens.store');
+    Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
+    Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
+    Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');
+});
 
     // Profil
     Route::get('/user/{id}/profil/', [UserController::class, 'show'])->name('users.profil');

@@ -19,4 +19,12 @@ class DemandeTypeExamen extends Pivot
     protected $casts = [
         'date_resultat' => 'date',
     ];
+    public function demandeExamen()
+    {
+        return $this->belongsTo(DemandeExamen::class, 'demande_examen_id');
+    }
+    public function typeExamen()
+    {
+        return $this->belongsTo(TypeExamen::class, 'type_examen_id');
+    }
 }

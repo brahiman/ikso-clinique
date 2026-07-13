@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class DemandeExamen extends Model
 {
     use HasFactory;
+    protected $table = 'demande_examens';
 
     protected $fillable = [
         'patient_id',
@@ -53,5 +54,9 @@ class DemandeExamen extends Model
             'resultat',
             'date_resultat'
         )->withTimestamps();
+    }
+    public function details()
+    {
+        return $this->hasMany(DemandeTypeExamen::class, 'demande_examen_id');
     }
 }

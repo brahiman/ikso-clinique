@@ -12,9 +12,9 @@ return new class extends Migration
 
     $table->id();
 
-    $table->foreignId('demandes_examen_id')->constrained()->cascadeOnDelete();
+    $table->foreignId('demande_examen_id')->constrained('demande_examens')->cascadeOnDelete();
 
-    $table->foreignId('types_examen_id')->constrained()->cascadeOnDelete();
+    $table->foreignId('type_examen_id')->constrained('type_examens')->cascadeOnDelete();
 
     $table->text('observation')->nullable();
 

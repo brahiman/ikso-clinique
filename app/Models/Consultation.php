@@ -51,6 +51,10 @@ class Consultation extends Model
     {
         return $this->hasMany(DemandeExamen::class);
     }
+    public function ordonnances()
+    {
+        return $this->hasMany(Ordonnance::class);
+    }   
 
     // ====================== SCOPES DE SÉCURITÉ ======================
 
