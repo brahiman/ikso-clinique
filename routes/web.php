@@ -32,6 +32,54 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('/users', UserController::class);
         Route::post('/users/{id}/password/reset', [UserController::class, 'passwordReset'])->name('users.passwordReset');
+
+        Route::prefix('statistiques')->name('statistiques.')->group(function () {
+
+            // Export Excel générique (?type=... reprend les mêmes clés que les URLs ci-dessous)
+            Route::get('/export', [StatistiqueController::class, 'export'])->name('export');
+
+            // 1. Activité et flux de patients
+            Route::get('/consultations-par-periode', [StatistiqueController::class, 'consultationsParPeriode'])->name('consultationsParPeriode');
+            Route::get('/taux-consultations-urgentes', [StatistiqueController::class, 'tauxConsultationsUrgentes'])->name('tauxConsultationsUrgentes');
+            Route::get('/statut-consultations', [StatistiqueController::class, 'statutConsultations'])->name('statutConsultations');
+            Route::get('/statut-rendez-vous', [StatistiqueController::class, 'statutRendezVous'])->name('statutRendezVous');
+            Route::get('/taux-no-show', [StatistiqueController::class, 'tauxNoShow'])->name('tauxNoShow');
+
+            // 2. Demandes de consultation (entonnoir)
+            Route::get('/entonnoir-demandes-consultations', [StatistiqueController::class, 'entonnoirDemandesConsultations'])->name('entonnoirDemandesConsultations');
+            Route::get('/delai-moyen-affectation', [StatistiqueController::class, 'delaiMoyenAffectation'])->name('delaiMoyenAffectation');
+            Route::get('/demandes-par-urgence', [StatistiqueController::class, 'demandesParUrgence'])->name('demandesParUrgence');
+            Route::get('/demandes-par-service', [StatistiqueController::class, 'demandesParService'])->name('demandesParService');
+
+            // 3. Démographie des patients
+            Route::get('/pyramide-ages', [StatistiqueController::class, 'pyramideAges'])->name('pyramideAges');
+            Route::get('/repartition-sexe', [StatistiqueController::class, 'repartitionSexe'])->name('repartitionSexe');
+            Route::get('/repartition-groupe-sanguin', [StatistiqueController::class, 'repartitionGroupeSanguin'])->name('repartitionGroupeSanguin');
+
+            // 4. Médecins et spécialités
+            Route::get('/charge-travail-medecins', [StatistiqueController::class, 'chargeTravailMedecins'])->name('chargeTravailMedecins');
+            Route::get('/repartition-medecins-par-specialite', [StatistiqueController::class, 'repartitionMedecinsParSpecialite'])->name('repartitionMedecinsParSpecialite');
+            Route::get('/statut-medecins', [StatistiqueController::class, 'statutMedecins'])->name('statutMedecins');
+
+            // 5. Examens médicaux
+            Route::get('/types-examens-plus-demandes', [StatistiqueController::class, 'typesExamensPlusDemandes'])->name('typesExamensPlusDemandes');
+            Route::get('/delai-moyen-examens', [StatistiqueController::class, 'delaiMoyenExamens'])->name('delaiMoyenExamens');
+            Route::get('/statut-examens', [StatistiqueController::class, 'statutExamens'])->name('statutExamens');
+
+            // 6. Prescriptions (ordonnances)
+            Route::get('/medicaments-plus-prescrits', [StatistiqueController::class, 'medicamentsPlusPrescrits'])->name('medicamentsPlusPrescrits');
+            Route::get('/nombre-moyen-medicaments-par-ordonnance', [StatistiqueController::class, 'nombreMoyenMedicamentsParOrdonnance'])->name('nombreMoyenMedicamentsParOrdonnance');
+            Route::get('/repartition-forme-medicaments', [StatistiqueController::class, 'repartitionFormeMedicaments'])->name('repartitionFormeMedicaments');
+
+            // 7. Antécédents médicaux
+            Route::get('/antecedents-par-type', [StatistiqueController::class, 'antecedentsParType'])->name('antecedentsParType');
+            Route::get('/antecedents-par-gravite', [StatistiqueController::class, 'antecedentsParGravite'])->name('antecedentsParGravite');
+            Route::get('/pathologies-frequentes', [StatistiqueController::class, 'pathologiesFrequentes'])->name('pathologiesFrequentes');
+
+            // 8. Vue d'ensemble / tableau de bord
+            Route::get('/dashboard-kpis', [StatistiqueController::class, 'dashboardKpis'])->name('dashboardKpis');
+            Route::get('/dashboard-complet', [StatistiqueController::class, 'dashboardComplet'])->name('dashboardComplet');
+        });
         Route::resource('/statistiques', StatistiqueController::class)->only(['index', 'show']);
     });
 

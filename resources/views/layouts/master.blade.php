@@ -55,6 +55,8 @@
 <!-- Plugins supplémentaires -->
 <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
 <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
+<script src="{{ asset('assets/libs/chart.js/chart.umd.js') }}"></script>
+
 <!-- Datatables, etc. -->
 
 <script src="{{ asset('assets/js/app.js') }}"></script>
