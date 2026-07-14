@@ -11,14 +11,15 @@ class DossierMedical extends Model
     protected $table = 'dossiers_medicaux';
     protected $fillable = [
         'patient_id',
-        'antecedents_familiaux',
-        'allergies',
-        'vaccins',
         'notes_generales'
     ];
 
     public function patient()
     {
         return $this->belongsTo(Patient::class);
+    }
+    public function antecedentsMedicaux()
+    {
+        return $this->hasMany(AntecedentMedical::class);
     }
 }

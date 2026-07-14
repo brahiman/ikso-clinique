@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Medecin\ConsultationController;
 use App\Http\Controllers\Medecin\DemandeController;
 use App\Http\Controllers\Medecin\MedecinDashboardController;
+use App\Http\Controllers\Medecin\PatientController;
 use App\Http\Controllers\Medecin\RendezVousController;
 use Illuminate\Support\Facades\Route;
 
@@ -159,6 +160,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
     Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
     Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');
+    //Route pour la gestion des patients
+    Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
+    Route::get('/patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
+    Route::post('/patients/{patient}/dossier-medical', [PatientController::class, 'storeDossierMedical'])->name('patients.dossier.store');
+    // Dossier médical (notes générales)
+Route::put('patients/{patient}/dossier-medical', [PatientController::class, 'updateDossierMedical'])
+    ->name('patients.dossierMedical.update');
+
+// Antécédents médicaux
+Route::post('patients/{patient}/antecedents', [PatientController::class, 'storeAntecedent'])
+    ->name('patients.antecedents.store');
+
+Route::put('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'updateAntecedent'])
+    ->name('patients.antecedents.update');
+
+Route::delete('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'destroyAntecedent'])
+    ->name('patients.antecedents.destroy');
+
 });
 
     // Profil

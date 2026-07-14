@@ -137,9 +137,11 @@ class ConsultationController extends Controller
         if ($statut === 'terminee' && $consultation->rendezVous) {
             $consultation->rendezVous->update(['statut' => 'termine']);
         }
-
-        return redirect()->route('medecin.consultations.index')
+        //on reldirige vers le show de la consultation 
+        return redirect()->route('medecin.consultations.show', $consultation)
             ->with('success', $statut === 'terminee' ? 'Consultation terminée.' : 'Consultation mise à jour.');
+        // return redirect()->route('medecin.consultations.index')
+        //     ->with('success', $statut === 'terminee' ? 'Consultation terminée.' : 'Consultation mise à jour.');
     }
 
    public function show(Consultation $consultation)

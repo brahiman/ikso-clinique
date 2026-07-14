@@ -56,6 +56,8 @@ class Patient extends Model
     {
         return $this->hasMany(DemandeExamen::class);
     }
+   
+    
 
     // ====================== HELPERS ======================
 

@@ -70,7 +70,7 @@
                     <!-- ==================== MÉDECIN ==================== -->
                     <li class="menu-title">Mon Travail</li>
                     <li>
-                        <a href="#" class="waves-effect">
+                        <a href="{{ route('medecin.patients.index') }}" class="waves-effect">
                             <i class="ri-user-line"></i>
                             <span>Mes Patients</span>
                         </a>
