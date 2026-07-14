@@ -56,7 +56,7 @@ class Patient extends Model
     {
         return $this->hasMany(DemandeExamen::class);
     }
-    
+
 
     // ====================== HELPERS ======================
 
@@ -80,11 +80,10 @@ class Patient extends Model
         return $this->hasMany(AntecedentMedical::class);
     }
 
-   
-
     public function ordonnances()
     {
         return $this->hasMany(Ordonnance::class);
     }
+
 }
 

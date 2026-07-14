@@ -25,7 +25,7 @@ class DossierMedicalController extends Controller
                 'antecedents',
                 'consultations.medecin.user',
                 'rendezVous.medecin.user',
-                'examens'
+                'demandesExamens'
             ])
             ->findOrFail($patientId);
 

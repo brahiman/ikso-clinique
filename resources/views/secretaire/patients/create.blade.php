@@ -77,7 +77,9 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Enregistrer le Patient</button>
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-primary">Enregistrer le Patient</button>
+                        </div>
                     </form>
                 </div>
             </div>

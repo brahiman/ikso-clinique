@@ -67,11 +67,11 @@
                             <h5>Examens Complémentaires</h5>
                         </div>
                         <div class="card-body">
-                            @if($patient->examens->isEmpty())
+                            @if($patient->demandesExamens->isEmpty())
                                 <p class="text-muted">Aucun examen enregistré.</p>
                             @else
                                 <div class="list-group">
-                                    @foreach($patient->examens as $examen)
+                                    @foreach($patient->demandesExamens as $examen)
                                         <div class="list-group-item">
                                             <strong>{{ $examen->type_examen }}</strong><br>
                                             <small>{{ $examen->description }}</small>

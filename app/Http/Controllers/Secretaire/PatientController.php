@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Secretaire;
 
 use App\Http\Controllers\Controller;
+use App\Models\DossierMedical;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use App\Models\Medecin;
@@ -25,12 +26,14 @@ class PatientController extends Controller
         $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'sexe' => 'required|in:M,F,Autre',
+            'sexe' => 'required|in:M,F',
             'date_naissance' => 'required|date',
             'telephone' => 'required|string|unique:patients,telephone',
             'email' => 'nullable|email|unique:patients,email',
             'adresse' => 'nullable|string',
             'groupe_sanguin' => 'nullable|string',
+            'contact_urgence_nom' => 'nullable|string',
+            'contact_urgence_telephone' => 'nullable|string',
         ]);
 
         Patient::create($request->all() + ['created_by' => auth()->id()]);
@@ -46,16 +49,60 @@ class PatientController extends Controller
 
         return view('secretaire.patients.affecter', compact('patient', 'medecins', 'medecinsActuels'));
     }
-
     public function affecter(Request $request, Patient $patient)
     {
         $request->validate([
             'medecin_id' => 'required|exists:medecins,id'
         ]);
 
-        $patient->medecins()->syncWithoutDetaching([$request->medecin_id]);
+        $medecinId = $request->medecin_id;
+
+        // Affectation du patient au médecin
+        $patient->medecins()->syncWithoutDetaching([$medecinId]);
+
+        // Création automatique du dossier médical si inexistant
+        if (!$patient->dossierMedical) {
+            DossierMedical::create([
+                'patient_id' => $patient->id,
+                'notes_generales' => 'Dossier initié lors de l’affectation au médecin.',
+            ]);
+        }
 
         return redirect()->route('secretaire.patients.index')
-            ->with('success', 'Patient affecté au médecin avec succès.');
+            ->with('success', 'Patient affecté au médecin et dossier médical initié.');
     }
+
+    public function show(Patient $patient)
+    {
+        $patient->load('responsable', 'medecins.user', 'antecedents', 'consultations');
+        return view('secretaire.patients.show', compact('patient'));
+    }
+
+    public function edit(Patient $patient)
+    {
+        return view('secretaire.patients.edit', compact('patient'));
+    }
+
+    public function update(Request $request, Patient $patient)
+    {
+        $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'sexe' => 'required|in:M,F,Autre',
+            'date_naissance' => 'nullable|date',
+            'telephone' => 'required|string|unique:patients,telephone,' . $patient->id,
+            'email' => 'nullable|email|unique:patients,email,' . $patient->id,
+            'adresse' => 'nullable|string',
+            'groupe_sanguin' => 'nullable|string',
+            'contact_urgence_nom' => 'nullable|string',
+            'contact_urgence_telephone' => 'nullable|string',
+        ]);
+
+        $patient->update($request->all());
+
+        return redirect()->route('secretaire.patients.index')
+            ->with('success', 'Patient mis à jour avec succès.');
+    }
+
+
 }
