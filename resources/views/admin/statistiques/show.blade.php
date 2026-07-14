@@ -316,6 +316,7 @@
                                 <thead>
                                 <tr>
                                     <th>Médecin</th>
+                                    <th class="text-center">Patients</th>
                                     <th class="text-center">Consultations</th>
                                     <th class="text-center">Rendez-vous</th>
                                     <th class="text-center">Ordonnances</th>
@@ -730,7 +731,8 @@
                     }
                     tbody.innerHTML = data.map(row => `
                 <tr>
-                    <td>${row.medecin_nom ?? '—'}</td>
+                    <td>${row.medecin_nom ?? '—'}
+                    <td class="text-center">${row.nb_patients}</td>
                     <td class="text-center">${row.nb_consultations}</td>
                     <td class="text-center">${row.nb_rendez_vous}</td>
                     <td class="text-center">${row.nb_ordonnances}</td>

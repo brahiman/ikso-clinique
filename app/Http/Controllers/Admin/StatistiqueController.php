@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\StatistiqueExport;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class StatistiqueController extends Controller
@@ -432,15 +432,18 @@ class StatistiqueController extends Controller
             ->leftJoin('consultations', 'consultations.medecin_id', '=', 'medecins.id')
             ->leftJoin('rendez_vous', 'rendez_vous.medecin_id', '=', 'medecins.id')
             ->leftJoin('ordonnances', 'ordonnances.medecin_id', '=', 'medecins.id')
+            ->leftJoin('patient_medecin', 'patient_medecin.medecin_id', '=', 'medecins.id')
+            // ->leftJoin('patients', 'patients.id', '=', 'patient_medecin.patient_id')
             ->select(
-                'medecins.id as medecin_id',
+            //'medecins.id as medecin_id',
                 'users.name as medecin_nom',
+                DB::raw('COUNT(DISTINCT patient_medecin.id) as nb_patients'),
                 DB::raw('COUNT(DISTINCT consultations.id) as nb_consultations'),
                 DB::raw('COUNT(DISTINCT rendez_vous.id) as nb_rendez_vous'),
-                DB::raw('COUNT(DISTINCT ordonnances.id) as nb_ordonnances')
+                DB::raw('COUNT(DISTINCT ordonnances.id) as nb_ordonnances'),
             )
             ->groupBy('medecins.id', 'users.name')
-            ->orderByDesc('nb_consultations')
+            ->orderBy('users.name')
             ->get();
     }
 
@@ -497,9 +500,9 @@ class StatistiqueController extends Controller
     private function typesExamensPlusDemandesData(): Collection
     {
         return DB::table('demande_type_examen')
-            ->join('types_examen', 'types_examen.id', '=', 'demande_type_examen.types_examen_id')
-            ->select('types_examen.nom as type_examen', DB::raw('COUNT(*) as total'))
-            ->groupBy('types_examen.nom')
+            ->join('type_examens', 'type_examens.id', '=', 'demande_type_examen.type_examen_id')
+            ->select('type_examens.nom as type_examen', DB::raw('COUNT(*) as total'))
+            ->groupBy('type_examens.nom')
             ->orderByDesc('total')
             ->get();
     }
@@ -516,8 +519,8 @@ class StatistiqueController extends Controller
     {
         $delai = DB::table('demande_type_examen')
             ->whereNotNull('date_resultat')
-            ->join('demandes_examens', 'demandes_examens.id', '=', 'demande_type_examen.demandes_examen_id')
-            ->selectRaw('AVG(DATEDIFF(demande_type_examen.date_resultat, demandes_examens.date_demande)) as delai_moyen_jours')
+            ->join('demande_examens', 'demande_examens.id', '=', 'demande_type_examen.demande_examen_id')
+            ->selectRaw('AVG(DATEDIFF(demande_type_examen.date_resultat, demande_examens.date_demande)) as delai_moyen_jours')
             ->value('delai_moyen_jours');
 
         return [
@@ -535,7 +538,7 @@ class StatistiqueController extends Controller
 
     private function statutExamensData(): Collection
     {
-        return DB::table('demandes_examens')
+        return DB::table('demande_examens')
             ->select('statut', DB::raw('COUNT(*) as total'))
             ->groupBy('statut')
             ->get();
@@ -698,7 +701,7 @@ class StatistiqueController extends Controller
             'demandes_en_attente' => DB::table('demandes_consultations')
                 ->where('statut', 'en_attente')
                 ->count(),
-            'examens_en_cours' => DB::table('demandes_examens')
+            'examens_en_cours' => DB::table('demande_examens')
                 ->where('statut', 'en_cours')
                 ->count(),
         ];
