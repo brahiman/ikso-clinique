@@ -102,23 +102,67 @@
             {{-- ===== Onglets Examens / Ordonnances ===== --}}
             <ul class="nav nav-tabs mt-4" id="dossierTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="examens-tab" data-bs-toggle="tab"
-                            data-bs-target="#examens-pane" type="button" role="tab"
-                            aria-controls="examens-pane" aria-selected="false">
-                        <i class="fas fa-vials"></i> Demandes d'examens
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
                     <button class="nav-link" id="ordonnances-tab" data-bs-toggle="tab"
                             data-bs-target="#ordonnances-pane" type="button" role="tab"
                             aria-controls="ordonnances-pane" aria-selected="false">
                         <i class="fas fa-prescription"></i> Ordonnances
                     </button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="examens-tab" data-bs-toggle="tab"
+                            data-bs-target="#examens-pane" type="button" role="tab"
+                            aria-controls="examens-pane" aria-selected="false">
+                        <i class="fas fa-vials"></i> Demandes d'examens
+                    </button>
+                </li>
             </ul>
 
             <div class="tab-content border border-top-0 p-3 mb-3" id="dossierTabsContent">
+                 {{-- ===== Onglet Ordonnances ===== --}}
+                <div class="tab-pane fade" id="ordonnances-pane" role="tabpanel" aria-labelledby="ordonnances-tab">
 
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Date</th>
+                                <th>Médecin</th>
+                                <th>Nombre de médicaments</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @forelse($ordonnances as $ordonnance)
+                                <tr>
+                                    <td>#{{ $ordonnance->id }}</td>
+                                    <td>{{ $ordonnance->date_prescription->format('d/m/Y') }}</td>
+                                    <td>{{ $ordonnance->medecin->user->name }}</td>
+                                    <td>{{ $ordonnance->details->count() }}</td>
+
+                                    <td>
+                                        <button
+                                            class="btn btn-sm btn-primary"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#ordonnanceModal{{ $ordonnance->id }}">
+                                            Voir les détails
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        Aucune ordonnance.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+
+                    <div class="mt-3">
+                        {{ $ordonnances->appends(request()->except('ordonnances_page'))->links() }}
+                    </div>
+                </div>
                 {{-- ===== Onglet Examens ===== --}}
                 <div class="tab-pane fade" id="examens-pane" role="tabpanel" aria-labelledby="examens-tab">
 
@@ -173,51 +217,7 @@
                     </div>
                 </div>
 
-                {{-- ===== Onglet Ordonnances ===== --}}
-                <div class="tab-pane fade" id="ordonnances-pane" role="tabpanel" aria-labelledby="ordonnances-tab">
-
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>N°</th>
-                                <th>Date</th>
-                                <th>Médecin</th>
-                                <th>Nombre de médicaments</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @forelse($ordonnances as $ordonnance)
-                                <tr>
-                                    <td>#{{ $ordonnance->id }}</td>
-                                    <td>{{ $ordonnance->date_prescription->format('d/m/Y') }}</td>
-                                    <td>{{ $ordonnance->medecin->user->name }}</td>
-                                    <td>{{ $ordonnance->details->count() }}</td>
-
-                                    <td>
-                                        <button
-                                            class="btn btn-sm btn-primary"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#ordonnanceModal{{ $ordonnance->id }}">
-                                            Voir les détails
-                                        </button>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center">
-                                        Aucune ordonnance.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-
-                    <div class="mt-3">
-                        {{ $ordonnances->appends(request()->except('ordonnances_page'))->links() }}
-                    </div>
-                </div>
+               
 
             </div>
 
@@ -596,8 +596,8 @@
     document.addEventListener('DOMContentLoaded', function () {
         const params = new URLSearchParams(window.location.search);
 
-        let activeTabId = 'examens-tab';
-        let activePaneId = 'examens-pane';
+        let activeTabId = 'ordonnances-tab';
+        let activePaneId = 'ordonnances-pane';
 
         if (params.has('ordonnances_page')) {
             activeTabId = 'ordonnances-tab';
