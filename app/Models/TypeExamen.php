@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class TypeExamen extends Model
 {
     use HasFactory;
-protected $table = 'types_examens';
+protected $table = 'type_examens';
     protected $fillable = [
         'nom',
         'description',

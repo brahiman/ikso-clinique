@@ -12,7 +12,7 @@ class TypeExamenSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('types_examens')->insert([
+        DB::table('type_examens')->insert([
             [
                 'nom' => 'Analyse de sang',
                 'description' => 'Examen biologique permettant d’évaluer différents paramètres sanguins.',

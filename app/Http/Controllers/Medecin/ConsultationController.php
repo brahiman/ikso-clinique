@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Medecin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Consultation;
+use App\Models\DemandeExamen;
 use App\Models\Medicament;
+use App\Models\Ordonnance;
 use App\Models\RendezVous;
 use App\Models\TypeExamen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ConsultationController extends Controller
 {
@@ -118,7 +121,7 @@ class ConsultationController extends Controller
             'observations' => 'nullable|string',
             'traitement' => 'nullable|string',
             'recommandations' => 'nullable|string',
-            'action' => 'required|in:continuer,terminer',
+                'action' => 'required|in:continuer,terminer',
         ]);
 
         $statut = $validated['action'] === 'terminer' ? 'terminee' : 'en_cours';
@@ -139,55 +142,134 @@ class ConsultationController extends Controller
             ->with('success', $statut === 'terminee' ? 'Consultation terminée.' : 'Consultation mise à jour.');
     }
 
-    public function show(Consultation $consultation)
-    {
-        $medicaments=Medicament::all();
-        $typesExamens = TypeExamen::all();
-        $medecin = Auth::user()->medecin;
-        abort_if(!$medecin || $consultation->medecin_id !== $medecin->id, 403);
+   public function show(Consultation $consultation)
+{
+    $medecin = Auth::user()->medecin;
 
-        $consultation->load('patient', 'rendezVous','ordonnances','demandesExamens');
+    abort_if(!$medecin || $consultation->medecin_id !== $medecin->id, 403);
 
-        return view('medecin.consultations.show', compact('consultation', 'medicaments', 'typesExamens'));
-    }
+    $medicaments = Medicament::all();
+    $typesExamens = TypeExamen::all();
+
+    $consultation->load([
+        'patient',
+        'rendezVous',
+    ]);
+
+    $ordonnances = $consultation->ordonnances()
+        ->with([
+            'medecin',
+            'details.medicament',
+        ])
+        ->latest()
+        ->paginate(2, ['*'], 'ordonnances_page');
+
+    $demandesExamens = $consultation->demandesExamens()
+        ->with([
+            'details.typeExamen',
+        ])
+        ->latest()
+        ->paginate(2, ['*'], 'examens_page');
+
+    return view(
+        'medecin.consultations.show',
+        compact(
+            'consultation',
+            'medicaments',
+            'typesExamens',
+            'ordonnances',
+            'demandesExamens'
+        )
+    );
+}
     //fonction pour stocker les ordonnances et les examens complementaires
-    public function storeOrdonnance(Request $request, Consultation $consultation)
-    {
-        dd('ordonnance');
-        $medecin = Auth::user()->medecin;
-        abort_if(!$medecin || $consultation->medecin_id !== $medecin->id, 403);
+   public function storeOrdonnance(Request $request, Consultation $consultation)
+{
+    $medecin = Auth::user()->medecin;
 
-        $validated = $request->validate([
-            'medicament_id' => 'required|exists:medicaments,id',
-            'posologie' => 'required|string',
-            'duree' => 'required|string',
-            'instructions' => 'nullable|string',
+    abort_if(!$medecin || $consultation->medecin_id != $medecin->id, 403);
+
+    $validated = $request->validate([
+        'instructions' => 'nullable|string',
+
+        'medicaments' => 'required|array|min:1',
+
+        'medicaments.*.id' => 'required|exists:medicaments,id',
+        'medicaments.*.quantite' => 'required|string',
+        'medicaments.*.posologie' => 'required|string',
+        'medicaments.*.duree' => 'required|string',
+    ]);
+
+    DB::transaction(function () use ($validated, $consultation, $medecin) {
+
+        // Création de l'ordonnance
+        $ordonnance = Ordonnance::create([
+            'patient_id' => $consultation->patient_id,
+            'consultation_id' => $consultation->id,
+            'medecin_id' => $medecin->id,
+            'date_prescription' => now(),
+            'notes' => $validated['instructions'] ?? null,
         ]);
 
-        $consultation->ordonnances()->create($validated);
+        // Création des détails
+        foreach ($validated['medicaments'] as $medicament) {
 
-        return redirect()->route('medecin.consultations.show', $consultation)
-            ->with('success', 'Ordonnance ajoutée avec succès.');
-    }
+            $ordonnance->details()->create([
+                'medicament_id' => $medicament['id'],
+                'quantite' => $medicament['quantite'],
+                'frequence' => $medicament['posologie'],
+                'duree_jours' => (int) filter_var($medicament['duree'], FILTER_SANITIZE_NUMBER_INT),
+               // 'instructions' => $validated['instructions'] ?? null,
+            ]);
 
-    public function storeDemandeExamen(Request $request, Consultation $consultation)
+        }
+
+    });
+
+    return redirect()
+        ->route('medecin.consultations.show', $consultation)
+        ->with('success', 'Ordonnance enregistrée avec succès.');
+}
+
+   public function storeDemandeExamen(Request $request, Consultation $consultation)
     {
         $medecin = Auth::user()->medecin;
-        abort_if(!$medecin || $consultation->medecin_id !== $medecin->id, 403);
-        
-        $validated = $request->validate([
-            'type_examen' => 'required|string',
-            'description' => 'nullable|string',
-            'resultats' => 'nullable|string',
-            'date_demande' => 'required|date',
-            'date_resultat' => 'nullable|date|after_or_equal:date_demande',
-            'statut' => 'required|in:en_cours,termine',
-            ]);
-            
-            dd($request->all());
-        $consultation->demandesExamens()->create($validated);
 
-        return redirect()->route('medecin.consultations.show', $consultation)
-            ->with('success', 'Examen complémentaire ajouté avec succès.');
+        abort_if(!$medecin || $consultation->medecin_id != $medecin->id, 403);
+
+        $validated = $request->validate([
+            'instructions' => 'nullable|string',
+
+            'examens' => 'required|array|min:1',
+
+            'examens.*.id' => 'required|exists:type_examens,id',
+            'examens.*.observation' => 'nullable|string',
+        ]);
+
+        DB::transaction(function () use ($validated, $consultation) {
+
+            $demande = DemandeExamen::create([
+                'patient_id'      => $consultation->patient_id,
+                'consultation_id' => $consultation->id,
+                'date_demande'    => now(),
+                'instructions'    => $validated['instructions'] ?? null,
+                'statut'          => 'demande',
+            ]);
+
+            foreach ($validated['examens'] as $examen) {
+
+                $demande->typesExamens()->attach($examen['id'], [
+                    'observation'  => $examen['observation'] ?? null,
+                    'resultat'     => null,
+                    'date_resultat'=> null,
+                ]);
+
+            }
+
+        });
+
+        return redirect()
+            ->route('medecin.consultations.show', $consultation)
+            ->with('success', 'Demande d\'examens enregistrée avec succès.');
     }
 }
