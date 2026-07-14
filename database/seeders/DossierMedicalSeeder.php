@@ -16,10 +16,7 @@ class DossierMedicalSeeder extends Seeder
             DossierMedical::firstOrCreate(
                 ['patient_id' => $patient->id],
                 [
-                    'antecedents_familiaux' => 'Père : Hypertension, Mère : Diabète',
-                    'allergies' => 'Pénicilline, Arachides',
-                    'vaccins' => 'BCG, Hépatite B, Tétanos (à jour)',
-                    'notes_generales' => 'Patient suivi pour hypertension depuis 2022.',
+                    'notes_generales' => 'Dossier médical initial pour le patient ' . $patient->nom . ' ' . $patient->prenom,
                 ]
             );
         }
