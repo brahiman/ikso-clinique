@@ -80,10 +80,11 @@ class Patient extends Model
         return $this->hasMany(AntecedentMedical::class);
     }
 
+
+
     public function ordonnances()
     {
         return $this->hasMany(Ordonnance::class);
     }
-
 }
 

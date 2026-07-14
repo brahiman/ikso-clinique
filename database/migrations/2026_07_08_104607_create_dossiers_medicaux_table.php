@@ -6,20 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('dossiers_medicaux', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id')->unique()->constrained()->onDelete('cascade');
-            $table->text('antecedents_familiaux')->nullable();
-            $table->text('allergies')->nullable();
-            $table->text('vaccins')->nullable();
+
+            $table->foreignId('patient_id')
+                ->unique()
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->text('notes_generales')->nullable();
+
             $table->timestamps();
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('dossiers_medicaux');
     }

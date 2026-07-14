@@ -12,20 +12,22 @@ class AntecedentMedical extends Model
     protected $table = 'antecedents_medicaux';
 
     protected $fillable = [
-        'patient_id',
+        'dossier_medical_id',
         'type',
         'nom',
         'description',
         'date_evenement',
-        'gravite'
+        'gravite',
+        'actif'
     ];
 
     protected $casts = [
         'date_evenement' => 'date',
     ];
 
-    public function patient()
+   
+    public function dossierMedical()
     {
-        return $this->belongsTo(Patient::class);
+        return $this->belongsTo(DossierMedical::class, 'dossier_medical_id');
     }
 }

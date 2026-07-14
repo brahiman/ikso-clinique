@@ -122,6 +122,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
     Route::get('/patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
     Route::post('/patients/{patient}/dossier-medical', [PatientController::class, 'storeDossierMedical'])->name('patients.dossier.store');
+    // Dossier médical (notes générales)
+Route::put('patients/{patient}/dossier-medical', [PatientController::class, 'updateDossierMedical'])
+    ->name('patients.dossierMedical.update');
+
+// Antécédents médicaux
+Route::post('patients/{patient}/antecedents', [PatientController::class, 'storeAntecedent'])
+    ->name('patients.antecedents.store');
+
+Route::put('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'updateAntecedent'])
+    ->name('patients.antecedents.update');
+
+Route::delete('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'destroyAntecedent'])
+    ->name('patients.antecedents.destroy');
 
 });
 
