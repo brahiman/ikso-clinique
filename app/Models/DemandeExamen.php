@@ -59,4 +59,6 @@ class DemandeExamen extends Model
     {
         return $this->hasMany(DemandeTypeExamen::class, 'demande_examen_id');
     }
+
+
 }

@@ -9,11 +9,14 @@ class DossierMedicalController extends Controller
 {
     public function index()
     {
-        $patients = Auth::user()->patients()->with([
-            'antecedents',
-            'consultations.medecin.user',
-            'rendezVous'
-        ])->get();
+        $patients = Auth::user()->patients()
+            ->with([
+                'antecedents',
+                'consultations.medecin.user',
+                'rendezVous.medecin.user',
+                'demandesExamens'
+            ])
+            ->get();
 
         return view('patient.dossier-medical.index', compact('patients'));
     }
@@ -25,7 +28,9 @@ class DossierMedicalController extends Controller
                 'antecedents',
                 'consultations.medecin.user',
                 'rendezVous.medecin.user',
-                'examens'
+                'demandesExamens',
+                'ordonnances.medecin.user',   // ← Ajoute ou vérifie cette ligne
+                'ordonnances.details.medicament'  // Pour les détails des médicaments
             ])
             ->findOrFail($patientId);
 

@@ -16,10 +16,11 @@ class DatabaseSeeder extends Seeder
             MedecinSeeder::class,
             DossierMedicalSeeder::class,
             AntecedentMedicalSeeder::class,
-          //  ExamenSeeder::class,
-           // OrdonnanceSeeder::class
-           MedicamentSeeder::class,
-           TypeExamenSeeder::class,
+            ExamenSeeder::class,
+            //OrdonnanceSeeder::class,
+            MedicamentSeeder::class,
+            TypeExamenSeeder::class,
+
         ]);
 
     }

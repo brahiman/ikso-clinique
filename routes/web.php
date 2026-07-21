@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Secretaire\SecretaireDashboardController::class, 'index'])
             ->name('dashboard');
 
+
         // Demandes de consultation
         Route::get('/demandes', [App\Http\Controllers\Secretaire\DemandeController::class, 'index'])
             ->name('demandes.index');
@@ -118,8 +119,17 @@ Route::middleware('auth')->group(function () {
 
         Route::post('patients/{patient}/affecter', [App\Http\Controllers\Secretaire\PatientController::class, 'affecter'])
             ->name('patients.affecter');
+
+        Route::resource('patients', App\Http\Controllers\Secretaire\PatientController::class)
+            ->only([ 'create', 'store', 'show', 'edit', 'update']);
     });
 
+
+
+
+
+
+    // medecin
     Route::middleware(['role:medecin'])->prefix('medecin')->name('medecin.')->group(function () {
         Route::get('/dashboard', function () {
             return view('medecin.dashboard');

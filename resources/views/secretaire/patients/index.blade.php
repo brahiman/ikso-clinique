@@ -49,15 +49,13 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-info">
+                                        <a href="{{ route('secretaire.patients.show', $patient) }}" class="btn btn-sm btn-info">
                                             Voir
                                         </a>
-                                        <a href="#" class="btn btn-sm btn-warning">
+                                        <a href="{{ route('secretaire.patients.edit', $patient) }}" class="btn btn-sm btn-warning">
                                             Modifier
                                         </a>
-                                        <a href="{{ route('secretaire.patients.affecter-form', $patient) }}" class="btn btn-sm btn-success">
-                                            <i class="ri-user-add-line"></i> Affecter à un médecin
-                                        </a>
+
                                     </td>
                                 </tr>
                             @endforeach
