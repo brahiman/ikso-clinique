@@ -77,14 +77,12 @@ class Patient extends Model
 
     public function antecedents()
     {
-        return $this->hasMany(AntecedentMedical::class);
+        return $this->hasMany(AntecedentMedical::class, 'dossier_medical_id');
     }
-
-
-
     public function ordonnances()
     {
         return $this->hasMany(Ordonnance::class);
     }
+
 }
 

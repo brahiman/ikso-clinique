@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Secretaire;
 
 use App\Http\Controllers\Controller;
 use App\Models\DemandeConsultation;
+use App\Models\DossierMedical;
 use App\Models\Medecin;
 use App\Models\Patient;
 use App\Models\Consultation;
@@ -38,6 +39,14 @@ class DemandeController extends Controller
 
         // Affectation automatique du patient au médecin
         $demande->patient->medecins()->syncWithoutDetaching([$medecinId]);
+
+        // Création automatique du dossier médical
+        if (!$demande->patient->dossierMedical) {
+            DossierMedical::create([
+                'patient_id' => $demande->patient->id,
+                'notes_generales' => 'Dossier médical initié lors de l’affectation.',
+            ]);
+        }
 
         return redirect()->route('secretaire.demandes.index')
             ->with('success', 'Demande et patient affectés au médecin avec succès.');

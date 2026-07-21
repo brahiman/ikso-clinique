@@ -60,16 +60,16 @@ class PatientController extends Controller
         // Affectation du patient au médecin
         $patient->medecins()->syncWithoutDetaching([$medecinId]);
 
-        // Création automatique du dossier médical si inexistant
+        // Création automatique du dossier médical
         if (!$patient->dossierMedical) {
             DossierMedical::create([
                 'patient_id' => $patient->id,
-                'notes_generales' => 'Dossier initié lors de l’affectation au médecin.',
+                'notes_generales' => 'Dossier médical initié lors de l’affectation.',
             ]);
         }
 
         return redirect()->route('secretaire.patients.index')
-            ->with('success', 'Patient affecté au médecin et dossier médical initié.');
+            ->with('success', 'Patient affecté et dossier médical initié.');
     }
 
     public function show(Patient $patient)
