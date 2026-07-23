@@ -34,7 +34,7 @@
     <!-- Content -->
     <div class="main-content">
         <div class="page-content">
-            <div class="container-fluid">
+            <div class="container-fluid mt-4">
                 @yield('content')
             </div>
         </div>
