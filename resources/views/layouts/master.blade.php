@@ -23,6 +23,7 @@
 </head>
 
 <body data-sidebar="dark">
+
 <div id="layout-wrapper">
     <!-- Header (Topbar) -->
     @include('layouts.partials.topbar')

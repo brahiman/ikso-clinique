@@ -26,17 +26,22 @@ class PatientController extends Controller
         $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'sexe' => 'required|in:M,F',
-            'date_naissance' => 'required|date',
+            'sexe' => 'required|in:M,F,Autre',
+            'date_naissance' => 'nullable|date',
             'telephone' => 'required|string|unique:patients,telephone',
             'email' => 'nullable|email|unique:patients,email',
             'adresse' => 'nullable|string',
             'groupe_sanguin' => 'nullable|string',
             'contact_urgence_nom' => 'nullable|string',
             'contact_urgence_telephone' => 'nullable|string',
+        ], [
+            'email.unique' => 'Cet email est déjà utilisé par un autre patient.',
+            'telephone.unique' => 'Ce numéro de téléphone est déjà utilisé par un autre patient.',
         ]);
 
-        Patient::create($request->all() + ['created_by' => auth()->id()]);
+        Patient::create($request->all() + [
+                'created_by' => auth()->id(),
+            ]);
 
         return redirect()->route('secretaire.patients.index')
             ->with('success', 'Patient créé avec succès.');
