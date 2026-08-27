@@ -15,6 +15,7 @@ class DemandeConsultation extends Model
         'motif',
         'symptomes',
         'urgence',
+        'mode_consultation',
         'disponibilite_patient',
         'date_souhaitee',
         'heure_souhaitee',

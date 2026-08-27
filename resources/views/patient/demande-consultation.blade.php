@@ -9,9 +9,19 @@
                         <div class="card-body">
                             <h3 class="text-center mb-4">Demande de Rendez-vous</h3>
 
-                            <form action="{{ route('patient.demandes.store') }}" method="POST">
-                                @csrf
+                            @if(isset($patient))
+                                <div class="alert alert-info mb-4">
+                                    <strong>Patient sélectionné :</strong>
+                                    {{ $patient->prenom }} {{ $patient->nom }}
+                                    @if($patient->telephone)
+                                        — {{ $patient->telephone }}
+                                    @endif
+                                </div>
+                            @endif
 
+                            <form action="{{ isset($patient) ? route('patient.demandes.store-for-patient', $patient) : route('patient.demandes.store') }}" method="POST">
+                                @csrf
+                                @if(!isset($patient))
                                 <!-- Informations Personnelles -->
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -76,7 +86,7 @@
                                         <input type="text" name="contact_urgence_telephone" class="form-control">
                                     </div>
                                 </div>
-
+                                @endif
                                 <!-- Service et Urgence -->
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -99,6 +109,17 @@
                                             <option value="haute">Urgente</option>
                                         </select>
                                     </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Mode de consultation <span class="text-danger">*</span></label>
+                                    <select name="mode_consultation" class="form-control" required>
+                                        <option value="presentiel">À la clinique (présentiel)</option>
+                                        <option value="distance">À distance (téléphone ou vidéo)</option>
+                                    </select>
+                                    <small class="text-muted">
+                                        Choisissez « À distance » si le patient ne peut pas se déplacer à la clinique.
+                                    </small>
                                 </div>
 
                                 <!-- Préférences et Disponibilités -->

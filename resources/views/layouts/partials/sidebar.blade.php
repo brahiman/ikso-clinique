@@ -99,6 +99,12 @@
                             <span>Tableau de bord</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('patient.patients.index') }}" class="waves-effect">
+                            <i class="ri-user-line"></i>
+                            <span>Mes Patients</span>
+                        </a>
+                    </li>
 
                     <!-- Mes Rendez-vous -->
                     <li>

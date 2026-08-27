@@ -35,7 +35,7 @@ class ConsultationController extends Controller
             'observations_accueil' => 'nullable|string',
         ]);
 
-        Consultation::create([
+        $consultation = Consultation::create([
             'patient_id' => $request->patient_id,
             'medecin_id' => $request->medecin_id,
             'date_consultation' => now(),
@@ -46,7 +46,10 @@ class ConsultationController extends Controller
             'est_urgence' => $request->est_urgence ?? false,
         ]);
 
+       // Affectation automatique du patient au médecin
+        $consultation->patient->medecins()->syncWithoutDetaching([$request->medecin_id]);
+
         return redirect()->route('secretaire.dashboard')
-            ->with('success', 'Consultation directe créée avec succès.');
+            ->with('success', 'Consultation créée et patient affecté au médecin.');
     }
 }
