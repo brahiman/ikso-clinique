@@ -115,4 +115,43 @@ class DemandeController extends Controller
 
         return view('patient.consultations.index', compact('consultations'));
     }
+
+
+
+    public function createForPatient(Patient $patient)
+    {
+        // Sécurité : le patient doit appartenir au responsable connecté
+        abort_if($patient->responsable_id !== Auth::id(), 403);
+
+        return view('patient.demande-consultation', compact('patient'));
+    }
+
+    public function storeForPatient(Request $request, Patient $patient)
+    {
+        abort_if($patient->responsable_id !== Auth::id(), 403);
+
+        $validated = $request->validate([
+            'service_souhaite' => 'required|string',
+            'urgence' => 'required|in:basse,moyenne,haute',
+            'pref_medecin' => 'nullable|string',
+            'date_souhaitee' => 'nullable|date',
+            'heure_souhaitee' => 'nullable|string',
+            'disponibilite_patient' => 'nullable|string',
+            'symptomes' => 'required|string',
+        ]);
+
+        DemandeConsultation::create([
+            'patient_id' => $patient->id,
+            'service_souhaite' => $validated['service_souhaite'],
+            'motif' => $validated['service_souhaite'] . ' - ' . $validated['symptomes'],
+            'symptomes' => $validated['symptomes'],
+            'urgence' => $validated['urgence'],
+            'disponibilite_patient' => trim(($validated['disponibilite_patient'] ?? '') . ' | ' . ($validated['date_souhaitee'] ?? '') . ' ' . ($validated['heure_souhaitee'] ?? '')),
+            'pref_medecin' => $validated['pref_medecin'] ?? null,
+            'statut' => 'en_attente',
+        ]);
+
+        return redirect()->route('patient.demandes.index')
+            ->with('success', 'Demande de consultation envoyée pour ' . $patient->prenom . ' ' . $patient->nom . '.');
+    }
 }

@@ -85,9 +85,9 @@ Route::middleware('auth')->group(function () {
     });
     // Patients
     Route::middleware(['role:patient'])->prefix('patient')->name('patient.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('patient.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [App\Http\Controllers\Patient\PatientDashboardController::class, 'index'])
+            ->name('dashboard');
+
 
         Route::get('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'create'])->name('demandes.create');
         Route::post('/demande-consultation', [App\Http\Controllers\Patient\DemandeController::class, 'store'])->name('demandes.store');
@@ -99,7 +99,27 @@ Route::middleware('auth')->group(function () {
             Route::get('/dossier-medical', [App\Http\Controllers\Patient\DossierMedicalController::class, 'index'])->name('dossier.index');
             Route::get('/dossier-medical/{patient}', [App\Http\Controllers\Patient\DossierMedicalController::class, 'show'])->name('dossier.show');
 
+
+
+        // Mes Patients
+        Route::get('/mes-patients', [App\Http\Controllers\Patient\PatientController::class, 'index'])->name('patients.index');
+        Route::get('/mes-patients/{patient}/edit', [App\Http\Controllers\Patient\PatientController::class, 'edit'])->name('patients.edit');
+        Route::put('/mes-patients/{patient}', [App\Http\Controllers\Patient\PatientController::class, 'update'])->name('patients.update');
+
+        // Demande de consultation pour un patient précis
+        Route::get('/mes-patients/{patient}/demande', [App\Http\Controllers\Patient\DemandeController::class, 'createForPatient'])->name('demandes.create-for-patient');
+        Route::get('/mes-patients/{patient}/demande', [App\Http\Controllers\Patient\DemandeController::class, 'createForPatient'])
+            ->name('demandes.create-for-patient');
+
+        Route::post('/mes-patients/{patient}/demande', [App\Http\Controllers\Patient\DemandeController::class, 'storeForPatient'])
+            ->name('demandes.store-for-patient');
+        Route::get('/mes-patients/{patient}', [App\Http\Controllers\Patient\PatientController::class, 'show'])
+            ->name('patients.show');
+
     });
+
+
+
     Route::prefix('medecin')->name('medecin.')->middleware(['auth', 'role:medecin'])->group(function () {
     Route::get('/dashboard', [MedecinDashboardController::class, 'index'])->name('dashboard');
 
@@ -122,19 +142,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
     Route::get('/patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
     Route::post('/patients/{patient}/dossier-medical', [PatientController::class, 'storeDossierMedical'])->name('patients.dossier.store');
+
     // Dossier médical (notes générales)
-Route::put('patients/{patient}/dossier-medical', [PatientController::class, 'updateDossierMedical'])
-    ->name('patients.dossierMedical.update');
+    Route::put('patients/{patient}/dossier-medical', [PatientController::class, 'updateDossierMedical'])
+        ->name('patients.dossierMedical.update');
 
-// Antécédents médicaux
-Route::post('patients/{patient}/antecedents', [PatientController::class, 'storeAntecedent'])
-    ->name('patients.antecedents.store');
+    // Antécédents médicaux
+    Route::post('patients/{patient}/antecedents', [PatientController::class, 'storeAntecedent'])
+        ->name('patients.antecedents.store');
 
-Route::put('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'updateAntecedent'])
-    ->name('patients.antecedents.update');
+    Route::put('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'updateAntecedent'])
+        ->name('patients.antecedents.update');
 
-Route::delete('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'destroyAntecedent'])
-    ->name('patients.antecedents.destroy');
+    Route::delete('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'destroyAntecedent'])
+        ->name('patients.antecedents.destroy');
 
 });
 

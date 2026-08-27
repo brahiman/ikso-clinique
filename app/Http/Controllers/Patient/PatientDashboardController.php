@@ -9,10 +9,12 @@ use App\Models\DemandeConsultation;
 use App\Models\Medecin;
 use Illuminate\Support\Facades\Auth;
 
-class DashboardController extends Controller
+class PatientDashboardController extends Controller
 {
     public function index()
     {
+        $patients = Auth::user()->patients()->with('medecins.user')->get();
+        $patientIds = $patients->pluck('id');
         $user = Auth::user();
         $patientIds = $user->patients->pluck('id');
 
@@ -32,16 +34,21 @@ class DashboardController extends Controller
             ->get();
 
         // Stats
-        $rendezVousAvenir = $prochainsRdv->count();
+        $rendezVousAvenir = RendezVous::whereIn('patient_id', $patientIds)
+            ->where('date_heure', '>=', now())
+            ->count();
+
         $consultations = Consultation::whereIn('patient_id', $patientIds)->count();
+
         $demandesEnAttente = DemandeConsultation::whereIn('patient_id', $patientIds)
             ->where('statut', 'en_attente')
             ->count();
-        $medecinsAssignes = Medecin::whereHas('patients', function($q) use ($patientIds) {
-            $q->whereIn('id', $patientIds);
-        })->count();
 
+        $medecinsAssignes = Medecin::whereHas('patients', function ($q) use ($patientIds) {
+            $q->whereIn('patients.id', $patientIds);
+        })->count();
         return view('patient.dashboard', compact(
+            'patients',
             'prochainsRdv',
             'dernieresConsultations',
             'rendezVousAvenir',
