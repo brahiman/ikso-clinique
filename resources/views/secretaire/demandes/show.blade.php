@@ -95,6 +95,20 @@
                                         <br>
                                         <small class="text-muted">{{ $demande->created_at->diffForHumans() }}</small>
                                     </div>
+                                    <div>
+                                        <label class="text-muted small mb-1">Mode de consultation</label>
+                                        <br>
+                                        @if(($demande->mode_consultation ?? 'presentiel') === 'distance')
+                                            <span class="badge bg-info fs-6">
+            <i class="ri-phone-line me-1"></i> À distance
+            (téléphone ou vidéo)
+        </span>
+                                        @else
+                                            <span class="badge bg-primary fs-6">
+            <i class="ri-hospital-line me-1"></i> Présentiel
+        </span>
+                                        @endif
+                                    </div>
                                 </div>
                                 @if($demande->medecin)
                                     <div class="text-end">
@@ -228,6 +242,25 @@
                             </div>
 
                             <div class="mb-3">
+                                <label class="text-muted small mb-1">Mode de consultation</label>
+                                <p class="mb-0">
+                                    @if(($demande->mode_consultation ?? 'presentiel') === 'distance')
+                                        <span class="badge bg-info">
+                <i class="ri-vidicon-line me-1"></i> À distance (téléphone / vidéo)
+            </span>
+                                        <br>
+                                        <small class="text-muted">
+                                            Le patient ne peut pas se déplacer à la clinique.
+                                        </small>
+                                    @else
+                                        <span class="badge bg-primary">
+                <i class="ri-hospital-line me-1"></i> Présentiel à la clinique
+            </span>
+                                    @endif
+                                </p>
+                            </div>
+
+                            <div class="mb-3">
                                 <label class="text-muted small mb-1">Motif de consultation</label>
                                 <p class="mb-0">{{ $demande->motif }}</p>
                             </div>
@@ -327,6 +360,7 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label class="fw-bold">Choisir un médecin</label>
+
                                 <select name="medecin_id" class="form-select" required>
                                     <option value="">-- Sélectionner un médecin --</option>
                                     @foreach(\App\Models\Medecin::with('user')->get() as $med)
@@ -346,6 +380,7 @@
                                     <strong>Préférence du patient :</strong> {{ $demande->pref_medecin }}
                                 </div>
                             @endif
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">

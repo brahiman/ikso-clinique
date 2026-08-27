@@ -111,6 +111,17 @@
                                     </div>
                                 </div>
 
+                                <div class="mb-3">
+                                    <label>Mode de consultation <span class="text-danger">*</span></label>
+                                    <select name="mode_consultation" class="form-control" required>
+                                        <option value="presentiel">À la clinique (présentiel)</option>
+                                        <option value="distance">À distance (téléphone ou vidéo)</option>
+                                    </select>
+                                    <small class="text-muted">
+                                        Choisissez « À distance » si le patient ne peut pas se déplacer à la clinique.
+                                    </small>
+                                </div>
+
                                 <!-- Préférences et Disponibilités -->
                                 <div class="mb-3">
                                     <label>Préférence particulière (médecin)</label>
