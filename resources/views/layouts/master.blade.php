@@ -21,6 +21,13 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @yield('styles')
+    <style>
+    
+    .fl-wrapper, .fl-container, .flasher-container, #toast-container, .swal2-container {
+    z-index: 99999 !important;
+}
+</style>
+    </style>
 </head>
 
 <body data-sidebar="dark">

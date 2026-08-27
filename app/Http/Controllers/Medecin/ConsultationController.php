@@ -274,4 +274,62 @@ class ConsultationController extends Controller
             ->route('medecin.consultations.show', $consultation)
             ->with('success', 'Demande d\'examens enregistrée avec succès.');
     }
+    /**
+ * Met à jour les résultats des examens d'une demande
+ */
+public function updateResultatsExamen(Request $request, Consultation $consultation, DemandeExamen $demande)
+{
+    $medecin = Auth::user()->medecin;
+    abort_if(!$medecin || $consultation->medecin_id !== $medecin->id, 403);
+    abort_if($demande->consultation_id !== $consultation->id, 404);
+
+    $validated = $request->validate([
+        'resultats' => 'required|array',
+        'resultats.*.id' => 'required', // ID de la ligne dans la table pivot ou details
+        'resultats.*.resultat' => 'nullable|string',
+        'resultats.*.date_resultat' => 'nullable|date',
+    ]);
+
+    DB::transaction(function () use ($validated, $demande) {
+        $hasAtLeastOneResult = false;
+        $allCompleted = true;
+
+        foreach ($validated['resultats'] as $item) {
+            $resultat = !empty($item['resultat']) ? $item['resultat'] : null;
+            $dateResultat = $resultat ? ($item['date_resultat'] ?? now()) : null;
+
+            if ($resultat) {
+                $hasAtLeastOneResult = true;
+            } else {
+                $allCompleted = false;
+            }
+
+            // Si vous utilisez une relation HasMany (DemandeExamenDetail) :
+            if (method_exists($demande, 'details')) {
+                $demande->details()->where('id', $item['id'])->update([
+                    'resultat' => $resultat,
+                    'date_resultat' => $dateResultat,
+                ]);
+            } 
+            // Si vous utilisez une table pivot BelongsToMany (typesExamens) :
+            elseif (method_exists($demande, 'typesExamens')) {
+                $demande->typesExamens()->updateExistingPivot($item['id'], [
+                    'resultat' => $resultat,
+                    'date_resultat' => $dateResultat,
+                ]);
+            }
+        }
+
+        // Mise à jour automatique du statut de la demande
+        if ($allCompleted && $hasAtLeastOneResult) {
+            $demande->update(['statut' => 'termine']);
+        } elseif ($hasAtLeastOneResult) {
+            $demande->update(['statut' => 'en_cours']);
+        }
+    });
+
+    return redirect()
+        ->route('medecin.consultations.show', ['consultation' => $consultation, 'examens_page' => $request->get('examens_page', 1)])
+        ->with('success', 'Résultats d\'examens mis à jour avec succès.');
+}
 }

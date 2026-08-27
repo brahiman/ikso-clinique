@@ -82,6 +82,7 @@ class PatientController extends Controller
             'description' => $validated['description'] ?? null,
             'date_evenement' => $validated['date_evenement'] ?? null,
             'gravite' => $validated['gravite'] ?? null,
+            'patient_id' => $patient->id,
             'actif' => $request->boolean('actif'),
         ]);
 

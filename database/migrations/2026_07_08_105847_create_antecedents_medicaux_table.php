@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('dossier_medical_id')
                 ->constrained('dossiers_medicaux')
                 ->cascadeOnDelete();
-            //$table->foreignId('patient_id')->constrained()->onDelete('cascade');
+            $table->foreignId('patient_id')->constrained()->onDelete('cascade');
 
             $table->enum('type', [
                 'maladie',

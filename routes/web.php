@@ -175,39 +175,41 @@ Route::middleware('auth')->group(function () {
     Route::prefix('medecin')->name('medecin.')->middleware(['auth', 'role:medecin'])->group(function () {
         Route::get('/dashboard', [MedecinDashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/rendez-vous', [RendezVousController::class, 'index'])->name('rendez-vous.index');
-    Route::patch('/rendez-vous/{rendezVous}/statut', [RendezVousController::class, 'updateStatut'])->name('rendez-vous.statut');
-    Route::post('/rendez-vous/{rendezVous}/demarrer', [RendezVousController::class, 'demarrerConsultation'])->name('rendez-vous.demarrer');
-    Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultations.index');
-    Route::get('/consultations/create', [ConsultationController::class, 'create'])->name('consultations.create');
-    Route::post('/consultations', [ConsultationController::class, 'store'])->name('consultations.store');
-    Route::get('/consultations/{consultation}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
-    Route::put('/consultations/{consultation}', [ConsultationController::class, 'update'])->name('consultations.update');
-    Route::get('/consultations/{consultation}', [ConsultationController::class, 'show'])->name('consultations.show');
-    //routes pour  creer les ordonnances et les examens complémentaires
-    Route::post('/consultations/{consultation}/ordonnances', [ConsultationController::class, 'storeOrdonnance'])->name('consultations.ordonnances.store');
-    Route::post('/consultations/{consultation}/examens', [ConsultationController::class, 'storeDemandeExamen'])->name('consultations.examens.store');
-    Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
-    Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
-    Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');
-    //Route pour la gestion des patients
-    Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
-    Route::get('/patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
-    Route::post('/patients/{patient}/dossier-medical', [PatientController::class, 'storeDossierMedical'])->name('patients.dossier.store');
+        Route::get('/rendez-vous', [RendezVousController::class, 'index'])->name('rendez-vous.index');
+        Route::patch('/rendez-vous/{rendezVous}/statut', [RendezVousController::class, 'updateStatut'])->name('rendez-vous.statut');
+        Route::post('/rendez-vous/{rendezVous}/demarrer', [RendezVousController::class, 'demarrerConsultation'])->name('rendez-vous.demarrer');
+        Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultations.index');
+        Route::get('/consultations/create', [ConsultationController::class, 'create'])->name('consultations.create');
+        Route::post('/consultations', [ConsultationController::class, 'store'])->name('consultations.store');
+        Route::get('/consultations/{consultation}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
+        Route::put('/consultations/{consultation}', [ConsultationController::class, 'update'])->name('consultations.update');
+        Route::get('/consultations/{consultation}', [ConsultationController::class, 'show'])->name('consultations.show');
+        //routes pour  creer les ordonnances et les examens complémentaires
+        Route::post('/consultations/{consultation}/ordonnances', [ConsultationController::class, 'storeOrdonnance'])->name('consultations.ordonnances.store');
+        Route::post('/consultations/{consultation}/examens', [ConsultationController::class, 'storeDemandeExamen'])->name('consultations.examens.store');
+        Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
+        Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
+        Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');
+        //Route pour la gestion des patients
+        Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
+        Route::get('/patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
+        Route::post('/patients/{patient}/dossier-medical', [PatientController::class, 'storeDossierMedical'])->name('patients.dossier.store');
 
-    // Dossier médical (notes générales)
-    Route::put('patients/{patient}/dossier-medical', [PatientController::class, 'updateDossierMedical'])
-        ->name('patients.dossierMedical.update');
+        // Dossier médical (notes générales)
+        Route::put('patients/{patient}/dossier-medical', [PatientController::class, 'updateDossierMedical'])
+            ->name('patients.dossierMedical.update');
 
-    // Antécédents médicaux
-    Route::post('patients/{patient}/antecedents', [PatientController::class, 'storeAntecedent'])
-        ->name('patients.antecedents.store');
+        // Antécédents médicaux
+        Route::post('patients/{patient}/antecedents', [PatientController::class, 'storeAntecedent'])
+            ->name('patients.antecedents.store');
 
-    Route::put('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'updateAntecedent'])
-        ->name('patients.antecedents.update');
+        Route::put('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'updateAntecedent'])
+            ->name('patients.antecedents.update');
 
-    Route::delete('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'destroyAntecedent'])
-        ->name('patients.antecedents.destroy');
+        Route::delete('patients/{patient}/antecedents/{antecedent}', [PatientController::class, 'destroyAntecedent'])
+            ->name('patients.antecedents.destroy');
+        Route::put('consultations/{consultation}/examens/{demande}/resultats', [ConsultationController::class, 'updateResultatsExamen'])
+            ->name('consultations.examens.update-resultats');
 
 });
 
@@ -216,5 +218,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/password/change/', [UserController::class, 'passwordChange'])->name('users.passwordChange');
     Route::post('/user/{id}/password/update/', [UserController::class, 'passwordUpdate'])->name('users.passwordUpdate');
 });
+
 
 require __DIR__ . '/auth.php';
