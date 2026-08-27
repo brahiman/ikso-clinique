@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Medecin;
+use App\Models\MedecinSpecialite;
 use App\Models\Specialite;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class MedecinSeeder extends Seeder
 {
@@ -26,6 +27,7 @@ class MedecinSeeder extends Seeder
             ['email' => 'dr.diallo@clinique.com'],
             [
                 'name' => 'Dr. Amadou Diallo',
+                'matricule' => 'MED001',
                 'password' => bcrypt('password123'),
                 'telephone' => '0709988776',
                 'is_active' => true,
@@ -33,10 +35,10 @@ class MedecinSeeder extends Seeder
         );
         $user1->assignRole('medecin');
 
-        Medecin::firstOrCreate(
+        $medecin = Medecin::firstOrCreate(
             ['user_id' => $user1->id],
             [
-                'specialite_id' => Specialite::where('nom', 'Cardiologie')->first()->id,
+                // 'specialite_id' => Specialite::where('nom', 'Cardiologie')->first()->id,
                 'matricule' => 'MED001',
                 'telephone' => '0709988776',
                 'disponibilite' => json_encode([
@@ -48,11 +50,17 @@ class MedecinSeeder extends Seeder
             ]
         );
 
+        MedecinSpecialite::firstOrCreate([
+            'medecin_id' => $medecin->id,
+            'specialite_id' => Specialite::where('nom', 'Cardiologie')->first()->id,
+        ]);
+
         // Médecin 2
         $user2 = User::firstOrCreate(
             ['email' => 'dr.sow@clinique.com'],
             [
                 'name' => 'Dr. Fatou Sow',
+                'matricule' => 'MED002',
                 'password' => bcrypt('password123'),
                 'telephone' => '0775544332',
                 'is_active' => true,
@@ -60,10 +68,10 @@ class MedecinSeeder extends Seeder
         );
         $user2->assignRole('medecin');
 
-        Medecin::firstOrCreate(
+        $medecin = Medecin::firstOrCreate(
             ['user_id' => $user2->id],
             [
-                'specialite_id' => Specialite::where('nom', 'Gynécologie')->first()->id,
+                // 'specialite_id' => Specialite::where('nom', 'Gynécologie')->first()->id,
                 'matricule' => 'MED002',
                 'telephone' => '0775544332',
                 'disponibilite' => json_encode([
@@ -75,9 +83,14 @@ class MedecinSeeder extends Seeder
             ]
         );
 
+        MedecinSpecialite::firstOrCreate([
+            'medecin_id' => $medecin->id,
+            'specialite_id' => Specialite::where('nom', 'Gynécologie')->first()->id,
+        ]);
+
         $this->command->info('✅ Médecins et Spécialités créés avec succès !');
 
         //creer quelque medicaments
-        
+
     }
 }
