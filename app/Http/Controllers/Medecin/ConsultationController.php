@@ -43,20 +43,26 @@ class ConsultationController extends Controller
      * Formulaire de création, uniquement pour une consultation issue d'un rendez-vous.
      * Les consultations directes sont déjà créées par la secrétaire (statut en_cours).
      */
-    public function create(Request $request)
-    {
-        $medecin = Auth::user()->medecin;
-        abort_if(!$medecin, 403);
+  public function create(Request $request)
+{
+    $medecin = Auth::user()->medecin;
+    abort_if(!$medecin, 403);
 
-        $rendezVous = RendezVous::with('patient')->findOrFail($request->query('rendez_vous'));
-        abort_if($rendezVous->medecin_id !== $medecin->id, 403);
+    $rendezVous = RendezVous::with([
+        'patient.dossierMedical.antecedentsMedicaux',
+        'patient.consultations',
+        'patient.ordonnances',
+        'patient.demandesExamens'
+    ])->findOrFail($request->query('rendez_vous'));
 
-        if ($rendezVous->consultation) {
-            return redirect()->route('medecin.consultations.edit', $rendezVous->consultation);
-        }
+    abort_if($rendezVous->medecin_id !== $medecin->id, 403);
 
-        return view('medecin.consultations.create', compact('rendezVous'));
+    if ($rendezVous->consultation) {
+        return redirect()->route('medecin.consultations.edit', $rendezVous->consultation);
     }
+
+    return view('medecin.consultations.create', compact('rendezVous'));
+}
 
     public function store(Request $request)
     {
@@ -94,7 +100,7 @@ class ConsultationController extends Controller
             $rendezVous->update(['statut' => 'termine']);
         }
 
-        return redirect()->route('medecin.consultations.index')
+        return redirect()->route('medecin.consultations.show', $consultation)
             ->with('success', $statut === 'terminee' ? 'Consultation terminée.' : 'Consultation enregistrée, à poursuivre.');
     }
 
@@ -103,6 +109,7 @@ class ConsultationController extends Controller
      */
     public function edit(Consultation $consultation)
     {
+
         $medecin = Auth::user()->medecin;
         abort_if(!$medecin || $consultation->medecin_id !== $medecin->id, 403);
 

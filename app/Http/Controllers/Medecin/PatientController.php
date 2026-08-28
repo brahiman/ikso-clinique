@@ -53,6 +53,7 @@ class PatientController extends Controller
             'notes_generales' => 'nullable|string',
         ]);
 
+        $patient->dossierMedical()->firstOrCreate([], ['notes_generales' => null]);
         $patient->dossierMedical()->update($validated);
 
         return back()->with('success', 'Notes du dossier médical enregistrées.');
@@ -68,25 +69,32 @@ class PatientController extends Controller
         abort_if(!$medecin->patients->contains($patient->id), 403);
 
         $validated = $request->validate([
-            'type' => 'required|in:maladie,allergie,operation,vaccin,familial,autre',
-            'nom' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'date_evenement' => 'nullable|date',
-            'gravite' => 'nullable|in:faible,moyenne,haute',
-            'actif' => 'nullable|boolean',
+            'antecedents' => 'required|array|min:1',
+            'antecedents.*.type' => 'required|in:maladie,allergie,operation,vaccin,familial,autre',
+            'antecedents.*.nom' => 'required|string|max:255',
+            'antecedents.*.description' => 'nullable|string',
+            'antecedents.*.date_evenement' => 'nullable|date',
+            'antecedents.*.gravite' => 'nullable|in:faible,moyenne,haute',
+            'antecedents.*.actif' => 'nullable|boolean',
         ]);
 
-        $patient->dossierMedical->antecedentsMedicaux()->create([
-            'type' => $validated['type'],
-            'nom' => $validated['nom'],
-            'description' => $validated['description'] ?? null,
-            'date_evenement' => $validated['date_evenement'] ?? null,
-            'gravite' => $validated['gravite'] ?? null,
-            'patient_id' => $patient->id,
-            'actif' => $request->boolean('actif'),
-        ]);
+        $dossier = $patient->dossierMedical()->firstOrCreate([], ['notes_generales' => null]);
 
-        return back()->with('success', 'Antécédent ajouté avec succès.');
+        foreach ($validated['antecedents'] as $antecedent) {
+            $dossier->antecedentsMedicaux()->create([
+                'type' => $antecedent['type'],
+                'nom' => $antecedent['nom'],
+                'description' => $antecedent['description'] ?? null,
+                'date_evenement' => $antecedent['date_evenement'] ?? null,
+                'gravite' => $antecedent['gravite'] ?? null,
+                'patient_id' => $patient->id,
+                'actif' => !empty($antecedent['actif']),
+            ]);
+        }
+
+        return back()->with('success', count($validated['antecedents']) > 1
+            ? 'Antécédents ajoutés avec succès.'
+            : 'Antécédent ajouté avec succès.');
     }
 
     /**
