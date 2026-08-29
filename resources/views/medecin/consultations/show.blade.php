@@ -3,7 +3,6 @@
 @section('content')
 <div class="page-content mt-4">
     <div class="container-fluid">
-        
         <!-- En-tête de la page -->
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
             <div class="d-flex align-items-center gap-3">
@@ -240,9 +239,26 @@
                                                         </span>
                                                     </td>
                                                     <td class="text-end">
-                                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ordonnanceModal{{ $ordonnance->id }}">
-                                                            <i class="bi bi-eye me-1"></i> Détails
-                                                        </button>
+                                                        <div class="btn-group" role="group">
+                                                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ordonnanceModal{{ $ordonnance->id }}" title="Voir les détails">
+                                                                <i class="bi bi-eye"></i>
+                                                            </button>
+                                                            <a href="{{ route('medecin.consultations.ordonnances.pdf', $ordonnance->id) }}" class="btn btn-sm btn-outline-info" title="Télécharger le PDF" target="_blank">
+                                                                <i class="bi bi-file-pdf"></i>
+                                                            </a>
+                                                            <form action="{{ route('medecin.consultations.ordonnances.envoyer', $ordonnance->id) }}" method="POST" style="display: inline;">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Envoyer par email">
+                                                                    <i class="bi bi-envelope"></i>
+                                                                </button>
+                                                            </form>
+                                                            <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editOrdonnanceModal{{ $ordonnance->id }}" title="Modifier">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteOrdonnanceModal{{ $ordonnance->id }}" title="Supprimer">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -292,9 +308,26 @@
                                                         </span>
                                                     </td>
                                                     <td class="text-end">
-                                                        <button type="button" class="btn btn-sm btn-outline-info text-info" data-bs-toggle="modal" data-bs-target="#demandeModal{{ $demande->id }}">
-                                                            <i class="bi bi-eye me-1"></i> Détails
-                                                        </button>
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button" class="btn btn-sm btn-outline-info text-info" data-bs-toggle="modal" data-bs-target="#demandeModal{{ $demande->id }}" title="Voir les détails">
+                                                                <i class="bi bi-eye"></i>
+                                                            </button>
+                                                            <a href="{{ route('medecin.consultations.examens.pdf', $demande->id) }}" class="btn btn-sm btn-outline-primary" title="Télécharger le PDF" target="_blank">
+                                                                <i class="bi bi-file-pdf"></i>
+                                                            </a>
+                                                            <form action="{{ route('medecin.consultations.examens.envoyer', $demande->id) }}" method="POST" style="display: inline;">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Envoyer par email">
+                                                                    <i class="bi bi-envelope"></i>
+                                                                </button>
+                                                            </form>
+                                                            <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editDemandeModal{{ $demande->id }}" title="Modifier">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteDemandeModal{{ $demande->id }}" title="Supprimer">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -501,6 +534,15 @@
                             </div>
                         </div>
                         <div class="modal-footer border-0 px-4 pb-4">
+                            <a href="{{ route('medecin.consultations.ordonnances.pdf', $ordonnance->id) }}" class="btn btn-outline-info" target="_blank">
+                                <i class="bi bi-file-pdf me-1"></i> Télécharger PDF
+                            </a>
+                            <form action="{{ route('medecin.consultations.ordonnances.envoyer', $ordonnance->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-success">
+                                    <i class="bi bi-envelope me-1"></i> Envoyer par email
+                                </button>
+                            </form>
                             <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Fermer</button>
                         </div>
                     </div>
@@ -661,6 +703,234 @@
                 </div>
             </div>
         </div>
+
+        <!-- ==================== MODALS DE MODIFICATION ORDONNANCES ==================== -->
+        @foreach($ordonnances as $ordonnance)
+            <div class="modal fade" id="editOrdonnanceModal{{ $ordonnance->id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content border-0 shadow rounded-4">
+                        <form action="{{ route('medecin.consultations.ordonnances.update', $ordonnance->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="modal-header border-bottom py-3 px-4">
+                                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
+                                    <i class="bi bi-pencil-square text-primary"></i> Modifier l'ordonnance #{{ $ordonnance->id }}
+                                </h5>
+                                <button class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body p-4">
+                                <div class="mb-4 p-3 bg-light rounded-3 border">
+                                    <span class="text-muted small fw-semibold d-block mb-2">Instructions :</span>
+                                    <textarea class="form-control" rows="2" name="instructions" placeholder="Conseils particuliers, précautions d'emploi...">{{ $ordonnance->notes }}</textarea>
+                                </div>
+
+                                <div class="items-scroll-box border rounded-3 mb-3">
+                                    <table class="table align-middle mb-0">
+                                        <thead class="sticky-top bg-light shadow-2xs small text-uppercase text-muted">
+                                            <tr>
+                                                <th style="width: 32%;" class="ps-3">Médicament</th>
+                                                <th style="width: 13%;">Qté</th>
+                                                <th style="width: 30%;">Posologie</th>
+                                                <th style="width: 18%;">Durée</th>
+                                                <th style="width: 7%;" class="text-center pe-3"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="medicamentsTableEdit{{ $ordonnance->id }}">
+                                            @foreach($ordonnance->details as $key => $detail)
+                                                <tr class="medicament-row-edit">
+                                                    <td class="ps-3">
+                                                        <select class="form-select medicament-select-edit" name="medicaments[{{ $key }}][id]" required>
+                                                            <option value="">Choisir un médicament...</option>
+                                                            @foreach($medicaments as $medicament)
+                                                                <option value="{{ $medicament->id }}" {{ $detail->medicament_id == $medicament->id ? 'selected' : '' }}>{{ $medicament->nom }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" class="form-control" name="medicaments[{{ $key }}][quantite]" min="1" value="{{ $detail->quantite }}" placeholder="Qté" required>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="medicaments[{{ $key }}][posologie]" value="{{ $detail->frequence }}" placeholder="Ex: 1 comp. matin et soir" required>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="medicaments[{{ $key }}][duree]" value="{{ $detail->duree_jours }} jours" placeholder="Ex: 7 jours" required>
+                                                    </td>
+                                                    <td class="text-center pe-3">
+                                                        <button type="button" class="btn btn-outline-danger btn-sm border-0 removeRowEdit" title="Supprimer">
+                                                            <i class="bi bi-trash fs-5"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 addRowEdit" data-table-id="medicamentsTableEdit{{ $ordonnance->id }}" data-ordonnance-id="{{ $ordonnance->id }}">
+                                    <i class="bi bi-plus-circle me-1"></i> Ajouter un médicament
+                                </button>
+                            </div>
+
+                            <div class="modal-footer bg-light border-0 px-4 py-3">
+                                <button class="btn btn-light border px-4" data-bs-dismiss="modal" type="button">Annuler</button>
+                                <button class="btn btn-primary px-4 fw-semibold d-flex align-items-center gap-2" type="submit">
+                                    <i class="bi bi-check2-circle"></i> Enregistrer les modifications
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+
+        <!-- ==================== MODALS DE SUPPRESSION ORDONNANCES ==================== -->
+        @foreach($ordonnances as $ordonnance)
+            <div class="modal fade" id="deleteOrdonnanceModal{{ $ordonnance->id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow rounded-4">
+                        <div class="modal-header border-bottom py-3 px-4">
+                            <h5 class="modal-title fw-bold text-danger d-flex align-items-center gap-2">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Supprimer l'ordonnance
+                            </h5>
+                            <button class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body p-4 text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-trash fs-1 text-danger opacity-75"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-2">Êtes-vous sûr de vouloir supprimer cette ordonnance ?</h6>
+                            <p class="text-muted small mb-0">
+                                L'ordonnance #{{ $ordonnance->id }} sera supprimée définitivement. Cette action ne peut pas être annulée.
+                            </p>
+                        </div>
+
+                        <div class="modal-footer bg-light border-0 px-4 py-3 d-flex justify-content-center gap-2">
+                            <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Annuler</button>
+                            <form action="{{ route('medecin.consultations.ordonnances.destroy', $ordonnance->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger px-4 fw-semibold d-flex align-items-center gap-2">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+
+        <!-- ==================== MODALS DE MODIFICATION EXAMENS ==================== -->
+        @foreach($demandesExamens as $demande)
+            <div class="modal fade" id="editDemandeModal{{ $demande->id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content border-0 shadow rounded-4">
+                        <form action="{{ route('medecin.consultations.examens.update', $demande->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="modal-header border-bottom py-3 px-4">
+                                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
+                                    <i class="bi bi-pencil-square text-info"></i> Modifier la demande d'examens #{{ $demande->id }}
+                                </h5>
+                                <button class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body p-4">
+                                <div class="mb-4 p-3 bg-light rounded-3 border">
+                                    <span class="text-muted small fw-semibold d-block mb-2">Instructions générales :</span>
+                                    <textarea class="form-control" rows="2" name="instructions" placeholder="Instructions destinées au laboratoire ou au patient...">{{ $demande->instructions }}</textarea>
+                                </div>
+
+                                <div class="items-scroll-box border rounded-3 mb-3">
+                                    <table class="table align-middle mb-0">
+                                        <thead class="sticky-top bg-light shadow-2xs small text-uppercase text-muted">
+                                            <tr>
+                                                <th style="width: 45%;" class="ps-3">Examen</th>
+                                                <th style="width: 45%;">Observation / Précision</th>
+                                                <th style="width: 10%;" class="text-center pe-3"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="examensTableEdit{{ $demande->id }}">
+                                            @foreach($demande->details as $key => $detail)
+                                                <tr class="examen-row-edit">
+                                                    <td class="ps-3">
+                                                        <select class="form-select examen-select-edit" name="examens[{{ $key }}][id]" required>
+                                                            <option value="">Sélectionner un examen...</option>
+                                                            @foreach($typesExamens as $type)
+                                                                <option value="{{ $type->id }}" {{ $detail->type_examen_id == $type->id ? 'selected' : '' }}>{{ $type->nom }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="examens[{{ $key }}][observation]" value="{{ $detail->observation }}" placeholder="Ex : À jeun, profil spécifique...">
+                                                    </td>
+                                                    <td class="text-center pe-3">
+                                                        <button type="button" class="btn btn-outline-danger btn-sm border-0 removeExamEdit" title="Supprimer">
+                                                            <i class="bi bi-trash fs-5"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3 addExamEdit" data-table-id="examensTableEdit{{ $demande->id }}" data-demande-id="{{ $demande->id }}">
+                                    <i class="bi bi-plus-circle me-1"></i> Ajouter un examen
+                                </button>
+                            </div>
+
+                            <div class="modal-footer bg-light border-0 px-4 py-3">
+                                <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-info text-white px-4 fw-semibold d-flex align-items-center gap-2">
+                                    <i class="bi bi-check2-circle"></i> Enregistrer les modifications
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+
+        <!-- ==================== MODALS DE SUPPRESSION EXAMENS ==================== -->
+        @foreach($demandesExamens as $demande)
+            <div class="modal fade" id="deleteDemandeModal{{ $demande->id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow rounded-4">
+                        <div class="modal-header border-bottom py-3 px-4">
+                            <h5 class="modal-title fw-bold text-danger d-flex align-items-center gap-2">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Supprimer la demande d'examens
+                            </h5>
+                            <button class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body p-4 text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-trash fs-1 text-danger opacity-75"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-2">Êtes-vous sûr de vouloir supprimer cette demande d'examens ?</h6>
+                            <p class="text-muted small mb-0">
+                                La demande d'examens #{{ $demande->id }} sera supprimée définitivement. Cette action ne peut pas être annulée.
+                            </p>
+                        </div>
+
+                        <div class="modal-footer bg-light border-0 px-4 py-3 d-flex justify-content-center gap-2">
+                            <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Annuler</button>
+                            <form action="{{ route('medecin.consultations.examens.destroy', $demande->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger px-4 fw-semibold d-flex align-items-center gap-2">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
 
     </div>
 </div>
@@ -883,6 +1153,126 @@
             if(rows.length > 1) {
                 e.target.closest('tr').remove();
                 updateExamDropdowns();
+            }
+        }
+    });
+
+    /* ==========================================================
+       GESTION DES MODIFICATIONS ORDONNANCES
+       ========================================================== */
+    
+    document.addEventListener('click', function(e) {
+        if(e.target.closest('.removeRowEdit')) {
+            let rows = e.target.closest('table').querySelectorAll('tr');
+            if(rows.length > 1) {
+                e.target.closest('tr').remove();
+            }
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if(e.target.closest('.addRowEdit')) {
+            const tableId = e.target.closest('.addRowEdit').dataset.tableId;
+            const table = document.getElementById(tableId);
+            const rowCount = table.querySelectorAll('tr').length;
+            
+            const currentSelected = Array.from(table.querySelectorAll('.medicament-select-edit'))
+                .map(s => s.value)
+                .filter(v => v !== "");
+
+            let optionsHtml = `<option value="">Choisir un médicament...</option>`;
+            allMedicaments.forEach(med => {
+                const isSelected = currentSelected.includes(med.id.toString());
+                optionsHtml += `<option value="${med.id}" ${isSelected ? 'hidden disabled' : ''}>${med.nom}</option>`;
+            });
+
+            let row = `
+            <tr class="medicament-row-edit">
+                <td class="ps-3">
+                    <select class="form-select medicament-select-edit" name="medicaments[${rowCount}][id]" required>
+                        ${optionsHtml}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" class="form-control" name="medicaments[${rowCount}][quantite]" min="1" value="1" placeholder="Qté" required>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="medicaments[${rowCount}][posologie]" placeholder="Ex: 1 comp. matin et soir" required>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="medicaments[${rowCount}][duree]" placeholder="Ex: 7 jours" required>
+                </td>
+                <td class="text-center pe-3">
+                    <button type="button" class="btn btn-outline-danger btn-sm border-0 removeRowEdit" title="Supprimer">
+                        <i class="bi bi-trash fs-5"></i>
+                    </button>
+                </td>
+            </tr>
+            `;
+
+            table.insertAdjacentHTML('beforeend', row);
+            
+            // Faire défiler vers le bas
+            const modal = document.querySelector(`[id*="${tableId}"]`).closest('.modal-body');
+            if(modal && modal.querySelector('.items-scroll-box')) {
+                modal.querySelector('.items-scroll-box').scrollTop = modal.querySelector('.items-scroll-box').scrollHeight;
+            }
+        }
+    });
+
+    /* ==========================================================
+       GESTION DES MODIFICATIONS EXAMENS
+       ========================================================== */
+    
+    document.addEventListener('click', function(e) {
+        if(e.target.closest('.removeExamEdit')) {
+            let rows = e.target.closest('table').querySelectorAll('tr');
+            if(rows.length > 1) {
+                e.target.closest('tr').remove();
+            }
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if(e.target.closest('.addExamEdit')) {
+            const tableId = e.target.closest('.addExamEdit').dataset.tableId;
+            const table = document.getElementById(tableId);
+            const rowCount = table.querySelectorAll('tr').length;
+            
+            const currentSelected = Array.from(table.querySelectorAll('.examen-select-edit'))
+                .map(s => s.value)
+                .filter(v => v !== "");
+
+            let optionsHtml = `<option value="">Sélectionner un examen...</option>`;
+            allExamens.forEach(type => {
+                const isSelected = currentSelected.includes(type.id.toString());
+                optionsHtml += `<option value="${type.id}" ${isSelected ? 'hidden disabled' : ''}>${type.nom}</option>`;
+            });
+
+            let row = `
+            <tr class="examen-row-edit">
+                <td class="ps-3">
+                    <select class="form-select examen-select-edit" name="examens[${rowCount}][id]" required>
+                        ${optionsHtml}
+                    </select>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="examens[${rowCount}][observation]" placeholder="Ex : À jeun, profil spécifique...">
+                </td>
+                <td class="text-center pe-3">
+                    <button type="button" class="btn btn-outline-danger btn-sm border-0 removeExamEdit" title="Supprimer">
+                        <i class="bi bi-trash fs-5"></i>
+                    </button>
+                </td>
+            </tr>
+            `;
+
+            table.insertAdjacentHTML('beforeend', row);
+            
+            // Faire défiler vers le bas
+            const modal = document.querySelector(`[id*="${tableId}"]`).closest('.modal-body');
+            if(modal && modal.querySelector('.items-scroll-box')) {
+                modal.querySelector('.items-scroll-box').scrollTop = modal.querySelector('.items-scroll-box').scrollHeight;
             }
         }
     });

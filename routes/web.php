@@ -186,7 +186,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/consultations/{consultation}', [ConsultationController::class, 'show'])->name('consultations.show');
         //routes pour  creer les ordonnances et les examens complémentaires
         Route::post('/consultations/{consultation}/ordonnances', [ConsultationController::class, 'storeOrdonnance'])->name('consultations.ordonnances.store');
+        Route::put('/ordonnances/{ordonnance}', [ConsultationController::class, 'updateOrdonnance'])->name('consultations.ordonnances.update');
+        Route::delete('/ordonnances/{ordonnance}', [ConsultationController::class, 'destroyOrdonnance'])->name('consultations.ordonnances.destroy');
+        Route::get('/ordonnances/{ordonnance}/pdf', [ConsultationController::class, 'ordonnancePdf'])->name('consultations.ordonnances.pdf');
+        Route::post('/ordonnances/{ordonnance}/envoyer', [ConsultationController::class, 'envoyerOrdonnance'])->name('consultations.ordonnances.envoyer');
+
         Route::post('/consultations/{consultation}/examens', [ConsultationController::class, 'storeDemandeExamen'])->name('consultations.examens.store');
+        Route::put('/demandes-examens/{demande}', [ConsultationController::class, 'updateDemandeExamen'])->name('consultations.examens.update');
+        Route::delete('/demandes-examens/{demande}', [ConsultationController::class, 'destroyDemandeExamen'])->name('consultations.examens.destroy');
+        Route::get('/demandes-examens/{demande}/pdf', [ConsultationController::class, 'demandeExamenPdf'])->name('consultations.examens.pdf');
+        Route::post('/demandes-examens/{demande}/envoyer', [ConsultationController::class, 'envoyerDemandeExamen'])->name('consultations.examens.envoyer');
         Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index');
         Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show');
         Route::post('/demandes/{demande}/confirmer', [DemandeController::class, 'confirmer'])->name('demandes.confirmer');
@@ -211,13 +220,13 @@ Route::middleware('auth')->group(function () {
         Route::put('consultations/{consultation}/examens/{demande}/resultats', [ConsultationController::class, 'updateResultatsExamen'])
             ->name('consultations.examens.update-resultats');
 
-});
+    });
 
     // Profil
     Route::get('/user/{id}/profil/', [UserController::class, 'show'])->name('users.profil');
     Route::get('/user/password/change/', [UserController::class, 'passwordChange'])->name('users.passwordChange');
     Route::post('/user/{id}/password/update/', [UserController::class, 'passwordUpdate'])->name('users.passwordUpdate');
-});
 
+});
 
 require __DIR__ . '/auth.php';

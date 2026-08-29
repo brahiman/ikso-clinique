@@ -3,7 +3,6 @@
 @section('content')
 <div class="page-content">
     <div class="container-fluid">
-        
         <!-- En-tête de la page -->
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
             <div class="d-flex align-items-center gap-3">
@@ -187,7 +186,7 @@
                                 <!-- Notes optionnelles -->
                                 <div class="mb-4">
                                     <label class="form-label fw-semibold text-dark small">Instructions / Notes pour le patient</label>
-                                    <textarea name="notes" class="form-control" rows="3" placeholder="Ex: Se présenter 10 minutes avant avec les bilans précédents...">{{ old('notes') }}</textarea>
+                                    <textarea name="notes" class="form-control" rows="3" placeholder="Lien zoom si consultation à distance ou autres informations...">{{ old('notes') }}</textarea>
                                     <div class="form-text text-muted small">Ces informations seront transmises au patient dans son email de confirmation.</div>
                                 </div>
 
