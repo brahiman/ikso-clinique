@@ -18,7 +18,8 @@ class AntecedentMedical extends Model
         'description',
         'date_evenement',
         'gravite',
-        'actif'
+        'actif',
+        'patient_id',
     ];
 
     protected $casts = [

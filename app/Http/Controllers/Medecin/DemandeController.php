@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Medecin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ConsultationDistanceMail;
 use App\Models\DemandeConsultation;
 use App\Models\RendezVous;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class DemandeController extends Controller
 {
@@ -68,6 +71,19 @@ class DemandeController extends Controller
         ]);
 
         $demande->update(['statut' => 'confirmee']);
+
+        $modeConsultation = strtolower((string) ($demande->mode_consultation ?? ''));
+        if ($modeConsultation === 'distance') {
+            $demande->loadMissing('patient');
+            if ($demande->patient?->email) {
+                try {
+                    Mail::to($demande->patient->email)->queue(new ConsultationDistanceMail($demande, $rendezVous));
+                } catch (\Throwable $e) {
+                    Log::error("Échec d'envoi du mail de consultation à distance #{$demande->id} : ".$e->getMessage()
+                        .' — '.$e->getFile().':'.$e->getLine());
+                }
+            }
+        }
 
         return redirect()->route('medecin.demandes.index')
             ->with('success', 'Rendez-vous confirmé pour le ' . $rendezVous->date_heure->format('d/m/Y à H:i') . '.');

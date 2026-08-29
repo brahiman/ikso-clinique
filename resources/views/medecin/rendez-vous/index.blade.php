@@ -46,7 +46,10 @@
                                             <button class="btn btn-sm btn-primary">Démarrer la consultation</button>
                                         </form>
                                     @elseif($rdv->statut === 'en_cours')
-                                        <a href="{{ route('medecin.rendez-vous.demarrer', $rdv) }}" class="btn btn-sm btn-outline-primary">Reprendre</a>
+                                        <form action="{{ route('medecin.rendez-vous.demarrer', $rdv) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button class="btn btn-sm btn-outline-primary">Reprendre</button>
+                                        </form>
                                     @endif
                                 </td>
                             </tr>
